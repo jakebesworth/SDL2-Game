@@ -62,28 +62,29 @@ typedef struct object
 SDL_Surface * loadSurface(char * image);
 SDL_Surface * loadSurfaceBack(char * image, uint8_t colourR, uint8_t colourG, uint8_t colourB);
 void applySurface(int x, int y, SDL_Surface * source, SDL_Rect * clip);
-void mapRect(Object * obj, int x, int y, int w, int h);
 int init(char * title);
 
 /* Game Functions */
-Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type);
+Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type, int x, int y, int w, int h);
 void moveObject(Object * obj, int x, int y);
 void positionObject(Object * obj, int x, int y);
 void updateObjectAnimation(Object * obj);
+void updateUserActions(Object * ship);
 
 /* General Functions */
 char * getDate();
 
-/* Numeric Game Constants */
-const uint16_t SCREEN_WIDTH  = 720;
-const uint16_t SCREEN_HEIGHT  = 405;
-const uint16_t SCREEN_TOP  = 5;
-const uint16_t SCREEN_BOTTOM  = 40;
-const uint16_t SCREEN_LEFT  = 5;
-const uint16_t SCREEN_RIGHT  = 40;
-const uint8_t FRAMES_PER_SECOND = 60; /* Up to 144 */
+/* Numeric Game Constants - Move to an options menu eventually */
+#define SCREEN_WIDTH 720
+#define SCREEN_HEIGHT 405
+#define SCREEN_TOP (SCREEN_HEIGHT * 0.25)
+#define SCREEN_BOTTOM 40
+#define SCREEN_LEFT 5
+#define SCREEN_RIGHT 40
+#define FRAMES_PER_SECOND 60 /* Up to 144 */
+#define GAME_TICK_RATIO (60.0 / FRAMES_PER_SECOND)
 
-#define SHIP_SPEED 15
+#define SHIP_SPEED (15 * GAME_TICK_RATIO)
 
 /* Global SDL Variables */
 SDL_Window * window  = NULL;
@@ -94,7 +95,6 @@ int main(int argc, char * argv[])
     /* Game Variables */
     uint8_t exit       = 0;
     uint32_t  g_timer  = 0;
-    const uint8_t * keystates; 
 
     /* SDL Variables */
     SDL_Surface * spriteSheet   = NULL;
@@ -103,8 +103,6 @@ int main(int argc, char * argv[])
 
     /* User Variables */
     Object * ship = NULL;
-    int shipX = 0;
-    int shipY = 0;
 
     /* Set stderr stream */
     freopen(ERROR_FILE, "a", stderr);
@@ -120,9 +118,8 @@ int main(int argc, char * argv[])
     mask =  loadSurface(IMG_DIR "mask.bmp");
 
     /* Load User Object */
-    ship = createObject(spriteSheet, mask, SHIP);
-    mapRect(ship, 0, 0, 32, 32);
-    positionObject(ship, 0, 0);
+    ship = createObject(spriteSheet, mask, SHIP, 0, 0, 32, 32);
+    positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
 
     SDL_UpdateWindowSurface(window);
 
@@ -136,75 +133,33 @@ int main(int argc, char * argv[])
             if(e.type == SDL_QUIT)
             {
                 exit = 1;
+                break;
             }
             else if(e.type == SDL_KEYDOWN)
             {
                 switch(e.key.keysym.sym)
                 {
-                    case SDLK_UP:
+                    case SDLK_ESCAPE:
+                        exit = 1;
                         break;
                 }
             }
         }
-        
-        keystates = SDL_GetKeyboardState(NULL);
 
-        /* User Keyboard  */
-        if(keystates[SDL_SCANCODE_LEFT] || keystates[SDL_SCANCODE_A])
-        {
-            shipX--;
-        }
+        /* Update User Object */
+        updateUserActions(ship);
 
-        if(keystates[SDL_SCANCODE_RIGHT] || keystates[SDL_SCANCODE_D])
-        {
-            shipX++;
-        }
-
-        if(keystates[SDL_SCANCODE_UP] || keystates[SDL_SCANCODE_W])
-        {
-            shipY--;
-        }
-
-        if(keystates[SDL_SCANCODE_DOWN] || keystates[SDL_SCANCODE_S])
-        {
-            shipY++;
-        }
-
-        /* Setting Ship Boundaries */
-        if((ship->x + (shipX * SHIP_SPEED)) < (0 + SCREEN_LEFT))
-        {
-            shipX = 0;
-        }
-
-        if((ship->x + (shipX * SHIP_SPEED)) > (SCREEN_WIDTH - SCREEN_RIGHT))
-        {
-            shipX = 0;
-        }
-
-        if((ship->y + (shipY * SHIP_SPEED)) < (0 + SCREEN_TOP))
-        {
-            shipY = 0;
-        }
-
-        if((ship->y + (shipY * SHIP_SPEED)) > (SCREEN_HEIGHT - SCREEN_BOTTOM))
-        {
-            shipY = 0;
-        }
-
-        moveObject(ship, shipX * SHIP_SPEED, shipY * SHIP_SPEED);
-        shipX = 0;
-        shipY = 0;
-
-        // Update window
+        /* Update Window */
         SDL_UpdateWindowSurface(window);
 
-        // Frames Per Second
+        /* Frames Per Second */
         if((SDL_GetTicks() - g_timer) < (1000 / FRAMES_PER_SECOND))
         {
             SDL_Delay((1000 / FRAMES_PER_SECOND) - (SDL_GetTicks() - g_timer));
         }
     }
 
+    /* Clean Up */
     SDL_FreeSurface(spriteSheet);
     SDL_FreeSurface(mask);
     free(ship);
@@ -215,7 +170,59 @@ int main(int argc, char * argv[])
     return 0;
 }
 
-/* TODO MACRO  */
+void updateUserActions(Object * ship)
+{
+    const uint8_t * keystates; 
+    int shipX = 0;
+    int shipY = 0;
+
+    keystates = SDL_GetKeyboardState(NULL);
+
+    /* User Keyboard  */
+    if(keystates[SDL_SCANCODE_LEFT] || keystates[SDL_SCANCODE_A])
+    {
+        shipX--;
+    }
+
+    if(keystates[SDL_SCANCODE_RIGHT] || keystates[SDL_SCANCODE_D])
+    {
+        shipX++;
+    }
+
+    if(keystates[SDL_SCANCODE_UP] || keystates[SDL_SCANCODE_W])
+    {
+        shipY--;
+    }
+
+    if(keystates[SDL_SCANCODE_DOWN] || keystates[SDL_SCANCODE_S])
+    {
+        shipY++;
+    }
+
+    /* Setting Ship Boundaries */
+    if((ship->x + (shipX * SHIP_SPEED)) < (0 + SCREEN_LEFT))
+    {
+        shipX = 0;
+    }
+
+    if((ship->x + (shipX * SHIP_SPEED)) > (SCREEN_WIDTH - SCREEN_RIGHT))
+    {
+        shipX = 0;
+    }
+
+    if((ship->y + (shipY * SHIP_SPEED)) < (0 + SCREEN_TOP))
+    {
+        shipY = 0;
+    }
+
+    if((ship->y + (shipY * SHIP_SPEED)) > (SCREEN_HEIGHT - SCREEN_BOTTOM))
+    {
+        shipY = 0;
+    }
+
+    moveObject(ship, shipX * SHIP_SPEED, shipY * SHIP_SPEED);
+}
+
 void updateObjectAnimation(Object * obj)
 {
     obj->cImage = ((obj->cImage + 1) >= obj->nImage) ? 0 : obj->cImage++;
@@ -245,7 +252,7 @@ void moveObject(Object * obj, int x, int y)
     applySurface(obj->x, obj->y, obj->image, &clip);
 }
 
-Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type)
+Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type, int x, int y, int w, int h)
 {
     Object * obj = NULL;
 
@@ -261,6 +268,11 @@ Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type)
     obj->mask  = mask;
     obj->cImage = obj->nImage = obj->x = obj->y = 0;
     obj->type = type;
+
+    obj->clip.x = x;
+    obj->clip.y = y;
+    obj->clip.w = w;
+    obj->clip.h = h;
 
     return obj;
 }
@@ -293,14 +305,6 @@ int init(char * title)
     SDL_UpdateWindowSurface(window);
 
     return 1;
-}
-
-void mapRect(Object * obj, int x, int y, int w, int h)
-{
-    (&obj->clip)->x = x;
-    (&obj->clip)->y = y;
-    (&obj->clip)->w = w;
-    (&obj->clip)->h = h;
 }
 
 SDL_Surface * loadSurfaceBack(char * image, uint8_t colourR, uint8_t colourG, uint8_t colourB)
