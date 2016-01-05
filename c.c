@@ -39,7 +39,7 @@
 typedef enum
 {
     SHIP,
-    ENEMY,
+    ASTERIOD_SMALL,
     WALL,
     TYPE_OBJECT_SIZE
 } typeObject;
@@ -51,11 +51,12 @@ typedef struct object
     SDL_Surface * mask;
     SDL_Rect clip;
     /* Current Object sub-Image */
-    uint16_t cImage;
+    uint16_t subImage;
     /* Number of Object sub-Images */
-    uint16_t nImage;
+    uint16_t subImageNumber;
     int x;
     int y;
+    struct Object * next;
 } Object;
 
 /* SDL Wrapper Functions */
@@ -65,11 +66,12 @@ void applySurface(int x, int y, SDL_Surface * source, SDL_Rect * clip);
 int init(char * title);
 
 /* Game Functions */
-Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type, int x, int y, int w, int h);
+Object * createObject(SDL_Surface * image, SDL_Surface * mask, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h);
 void moveObject(Object * obj, int x, int y);
 void positionObject(Object * obj, int x, int y);
 void updateObjectAnimation(Object * obj);
 void updateUserActions(Object * ship);
+void updateAsteriods(Object * asteriods);
 
 /* General Functions */
 char * getDate();
@@ -84,7 +86,8 @@ char * getDate();
 #define FRAMES_PER_SECOND 60 /* Up to 144 */
 #define GAME_TICK_RATIO (60.0 / FRAMES_PER_SECOND)
 
-#define SHIP_SPEED (15 * GAME_TICK_RATIO)
+#define SHIP_SPEED (7.5 * GAME_TICK_RATIO)
+#define ASTERIOD_SPEED (0.75 * GAME_TICK_RATIO)
 
 /* Global SDL Variables */
 SDL_Window * window  = NULL;
@@ -95,6 +98,7 @@ int main(int argc, char * argv[])
     /* Game Variables */
     uint8_t exit       = 0;
     uint32_t  g_timer  = 0;
+    uint32_t  a_timer  = 0;
 
     /* SDL Variables */
     SDL_Surface * spriteSheet   = NULL;
@@ -104,25 +108,33 @@ int main(int argc, char * argv[])
     /* User Variables */
     Object * ship = NULL;
 
+    /* Enemy Variables */
+    Object * asteriods = NULL;
+
     /* Set stderr stream */
     freopen(ERROR_FILE, "a", stderr);
 
     /* Initialize Window */
-    if(!init("Stars;Gate"))
+    if(!init("Star"))
     {
         return 0;
     }
 
     /* Load Bitmaps */
-    spriteSheet = loadSurfaceBack(IMG_DIR "ship.bmp", 0x0, 0x0, 0x0);
+    spriteSheet = loadSurfaceBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
     mask =  loadSurface(IMG_DIR "mask.bmp");
 
     /* Load User Object */
-    ship = createObject(spriteSheet, mask, SHIP, 0, 0, 32, 32);
+    ship = createObject(spriteSheet, mask, 0, 3, SHIP, 0, 0, 32, 32);
     positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
+
+    /* Load Enemy Objects */
+    asteriods = createObject(spriteSheet, mask, 0, 3, ASTERIOD_SMALL, 0, 32, 96, 96);
+    positionObject(asteriods, (SCREEN_WIDTH - SCREEN_RIGHT - 48) / 2, SCREEN_TOP);
 
     SDL_UpdateWindowSurface(window);
 
+    a_timer = SDL_GetTicks();
     while(!exit)
     {
         g_timer = SDL_GetTicks();
@@ -149,6 +161,12 @@ int main(int argc, char * argv[])
         /* Update User Object */
         updateUserActions(ship);
 
+        if((SDL_GetTicks() - a_timer) > 50)
+        {
+            updateAsteriods(asteriods);
+            a_timer = SDL_GetTicks();
+        }
+
         /* Update Window */
         SDL_UpdateWindowSurface(window);
 
@@ -163,11 +181,17 @@ int main(int argc, char * argv[])
     SDL_FreeSurface(spriteSheet);
     SDL_FreeSurface(mask);
     free(ship);
+    free(asteriods);
 
     SDL_DestroyWindow(window);
     SDL_Quit();
 
     return 0;
+}
+
+void updateAsteriods(Object * asteriods)
+{
+    moveObject(asteriods, 0, SHIP_SPEED);
 }
 
 void updateUserActions(Object * ship)
@@ -199,6 +223,20 @@ void updateUserActions(Object * ship)
         shipY++;
     }
 
+    /* Updating Ship Animation */
+    if(shipX == 0)
+    {
+        ship->subImage = 0;
+    }    
+    else if(shipX == -1)
+    {
+        ship->subImage = 1;
+    }
+    else if(shipX == 1)
+    {
+        ship->subImage = 2;
+    }
+
     /* Setting Ship Boundaries */
     if((ship->x + (shipX * SHIP_SPEED)) < (0 + SCREEN_LEFT))
     {
@@ -225,7 +263,7 @@ void updateUserActions(Object * ship)
 
 void updateObjectAnimation(Object * obj)
 {
-    obj->cImage = ((obj->cImage + 1) >= obj->nImage) ? 0 : obj->cImage++;
+    obj->subImage = ((obj->subImage + 1) >= obj->subImageNumber) ? 0 : obj->subImage++;
 }
 
 void positionObject(Object * obj, int x, int y)
@@ -238,21 +276,16 @@ void positionObject(Object * obj, int x, int y)
 
 void moveObject(Object * obj, int x, int y)
 {
-    if(!x && !y)
-    {
-        return;
-    }
-
     SDL_Rect clip = obj->clip;
 
     applySurface(obj->x, obj->y, obj->mask, &obj->clip);
     obj->x += x;
     obj->y += y;
-    clip.x = clip.w * obj->cImage;
+    clip.x = clip.w * obj->subImage;
     applySurface(obj->x, obj->y, obj->image, &clip);
 }
 
-Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type, int x, int y, int w, int h)
+Object * createObject(SDL_Surface * image, SDL_Surface * mask, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h)
 {
     Object * obj = NULL;
 
@@ -266,13 +299,17 @@ Object * createObject(SDL_Surface * image, SDL_Surface * mask, typeObject type, 
 
     obj->image = image;
     obj->mask  = mask;
-    obj->cImage = obj->nImage = obj->x = obj->y = 0;
+    obj->subImage = subImage;
+    obj->subImageNumber = 3;
+    obj->x = obj->y = 0;
     obj->type = type;
 
     obj->clip.x = x;
     obj->clip.y = y;
     obj->clip.w = w;
     obj->clip.h = h;
+
+    obj->next = NULL;
 
     return obj;
 }
