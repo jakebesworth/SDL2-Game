@@ -39,7 +39,9 @@
 typedef enum
 {
     SHIP,
-    ASTERIOD_SMALL,
+    ASTEROID_SMALL,
+    ASTEROID_MEDIUM,
+    ASTEROID_LARGE,
     WALL,
     TYPE_OBJECT_SIZE
 } typeObject;
@@ -48,11 +50,8 @@ typedef struct object
 {
     typeObject type;
     SDL_Surface * image;
-    SDL_Surface * mask;
     SDL_Rect clip;
-    /* Current Object sub-Image */
     uint16_t subImage;
-    /* Number of Object sub-Images */
     uint16_t subImageNumber;
     int x;
     int y;
@@ -66,12 +65,13 @@ void applySurface(int x, int y, SDL_Surface * source, SDL_Rect * clip);
 int init(char * title);
 
 /* Game Functions */
-Object * createObject(SDL_Surface * image, SDL_Surface * mask, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h);
+Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h);
 void moveObject(Object * obj, int x, int y);
 void positionObject(Object * obj, int x, int y);
 void updateObjectAnimation(Object * obj);
 void updateUserActions(Object * ship);
-void updateAsteriods(Object * asteriods);
+Object * updateAsteroids(Object * asteroids, SDL_Surface * image);
+void freeObjects(Object * obj);
 
 /* General Functions */
 char * getDate();
@@ -79,7 +79,7 @@ char * getDate();
 /* Numeric Game Constants - Move to an options menu eventually */
 #define SCREEN_WIDTH 720
 #define SCREEN_HEIGHT 405
-#define SCREEN_TOP (SCREEN_HEIGHT * 0.25)
+#define SCREEN_TOP (SCREEN_HEIGHT * 0.15)
 #define SCREEN_BOTTOM 40
 #define SCREEN_LEFT 5
 #define SCREEN_RIGHT 40
@@ -87,7 +87,7 @@ char * getDate();
 #define GAME_TICK_RATIO (60.0 / FRAMES_PER_SECOND)
 
 #define SHIP_SPEED (7.5 * GAME_TICK_RATIO)
-#define ASTERIOD_SPEED (0.75 * GAME_TICK_RATIO)
+#define ASTEROID_SPEED (1.5 * GAME_TICK_RATIO)
 
 /* Global SDL Variables */
 SDL_Window * window  = NULL;
@@ -98,21 +98,20 @@ int main(int argc, char * argv[])
     /* Game Variables */
     uint8_t exit       = 0;
     uint32_t  g_timer  = 0;
-    uint32_t  a_timer  = 0;
 
     /* SDL Variables */
     SDL_Surface * spriteSheet   = NULL;
-    SDL_Surface * mask   = NULL;
-    SDL_Event e;
+    SDL_Event event;
 
     /* User Variables */
     Object * ship = NULL;
 
-    /* Enemy Variables */
-    Object * asteriods = NULL;
+    /* NPC Variables */
+    Object * asteroids = NULL;
 
-    /* Set stderr stream */
+    /* Setup*/
     freopen(ERROR_FILE, "a", stderr);
+    srand(time(NULL));
 
     /* Initialize Window */
     if(!init("Star"))
@@ -122,34 +121,33 @@ int main(int argc, char * argv[])
 
     /* Load Bitmaps */
     spriteSheet = loadSurfaceBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
-    mask =  loadSurface(IMG_DIR "mask.bmp");
 
     /* Load User Object */
-    ship = createObject(spriteSheet, mask, 0, 3, SHIP, 0, 0, 32, 32);
+    ship = createObject(spriteSheet, 0, 3, SHIP, 0, 0, 32, 32);
     positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
 
-    /* Load Enemy Objects */
-    asteriods = createObject(spriteSheet, mask, 0, 3, ASTERIOD_SMALL, 0, 32, 96, 96);
-    positionObject(asteriods, (SCREEN_WIDTH - SCREEN_RIGHT - 48) / 2, SCREEN_TOP);
-
-    SDL_UpdateWindowSurface(window);
-
-    a_timer = SDL_GetTicks();
     while(!exit)
     {
+        /* Global Timer */
         g_timer = SDL_GetTicks();
 
-        /* SDL Events */
-        while(SDL_PollEvent(&e) != 0)
+        /* Clear Screen */
+        if(SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0)))
         {
-            if(e.type == SDL_QUIT)
+            fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+        }
+
+        /* SDL Events */
+        while(SDL_PollEvent(&event) != 0)
+        {
+            if(event.type == SDL_QUIT)
             {
                 exit = 1;
                 break;
             }
-            else if(e.type == SDL_KEYDOWN)
+            else if(event.type == SDL_KEYDOWN)
             {
-                switch(e.key.keysym.sym)
+                switch(event.key.keysym.sym)
                 {
                     case SDLK_ESCAPE:
                         exit = 1;
@@ -158,16 +156,10 @@ int main(int argc, char * argv[])
             }
         }
 
-        /* Update User Object */
+        /* Redraw Canvas, Update Window */
+        asteroids = updateAsteroids(asteroids, spriteSheet);
         updateUserActions(ship);
 
-        if((SDL_GetTicks() - a_timer) > 50)
-        {
-            updateAsteriods(asteriods);
-            a_timer = SDL_GetTicks();
-        }
-
-        /* Update Window */
         SDL_UpdateWindowSurface(window);
 
         /* Frames Per Second */
@@ -179,9 +171,8 @@ int main(int argc, char * argv[])
 
     /* Clean Up */
     SDL_FreeSurface(spriteSheet);
-    SDL_FreeSurface(mask);
-    free(ship);
-    free(asteriods);
+    freeObjects(ship);
+    freeObjects(asteroids);
 
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -189,9 +180,51 @@ int main(int argc, char * argv[])
     return 0;
 }
 
-void updateAsteriods(Object * asteriods)
+Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
 {
-    moveObject(asteriods, 0, SHIP_SPEED);
+    Object * asteroid;
+    uint8_t random;
+
+    if((rand() % 20) == 1)
+    {
+        random = rand() % 6;
+
+        if(random >= 3)
+        {
+            asteroid = createObject(image, 0, 1, ASTEROID_SMALL, 0, 32, 32, 32);
+        }
+        else if(random >= 1)
+        {
+            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 32, 32, 64, 64);
+        }
+        else
+        {
+            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 96, 32, 96, 96);
+        }
+
+        asteroid->x = (int) ((rand() % (SCREEN_WIDTH)) - 32);
+        asteroid->y = -96;
+
+        asteroid->next = asteroids;
+        asteroids = asteroid;
+    }
+    else
+    {
+        asteroid = asteroids;
+    }
+
+    while(asteroids != NULL)
+    {
+        if(asteroids->y < 0)
+        {
+//            freeObjects(asteroids);
+        }
+
+        moveObject(asteroids, 0, ASTEROID_SPEED);
+        asteroids = asteroids->next;
+    }
+
+    return asteroid;
 }
 
 void updateUserActions(Object * ship)
@@ -268,24 +301,25 @@ void updateObjectAnimation(Object * obj)
 
 void positionObject(Object * obj, int x, int y)
 {
-    applySurface(obj->x, obj->y, obj->mask, &obj->clip);
+    SDL_Rect clip = obj->clip;
+
     obj->x = x;
     obj->y = y;
-    applySurface(obj->x, obj->y, obj->image, &obj->clip);
+    clip.x += clip.w * obj->subImage;
+    applySurface(obj->x, obj->y, obj->image, &clip);
 }
 
 void moveObject(Object * obj, int x, int y)
 {
     SDL_Rect clip = obj->clip;
 
-    applySurface(obj->x, obj->y, obj->mask, &obj->clip);
     obj->x += x;
     obj->y += y;
-    clip.x = clip.w * obj->subImage;
+    clip.x += clip.w * obj->subImage;
     applySurface(obj->x, obj->y, obj->image, &clip);
 }
 
-Object * createObject(SDL_Surface * image, SDL_Surface * mask, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h)
+Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h)
 {
     Object * obj = NULL;
 
@@ -298,7 +332,6 @@ Object * createObject(SDL_Surface * image, SDL_Surface * mask, int subImage, int
     }
 
     obj->image = image;
-    obj->mask  = mask;
     obj->subImage = subImage;
     obj->subImageNumber = 3;
     obj->x = obj->y = 0;
@@ -424,4 +457,13 @@ char * getDate()
     }
 
     return date;
+}
+
+void freeObjects(Object * obj)
+{
+    while(obj != NULL)
+    {
+        free(obj);
+        obj = obj->next;
+    }
 }
