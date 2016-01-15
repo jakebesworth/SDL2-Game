@@ -55,7 +55,7 @@ typedef struct object
     uint16_t subImageNumber;
     int x;
     int y;
-    struct Object * next;
+    struct object * next;
 } Object;
 
 /* SDL Wrapper Functions */
@@ -92,6 +92,7 @@ char * getDate();
 /* Global SDL Variables */
 SDL_Window * window  = NULL;
 SDL_Surface * screen = NULL;
+const uint8_t * keystates; 
 
 int main(int argc, char * argv[])
 {
@@ -155,6 +156,7 @@ int main(int argc, char * argv[])
                 }
             }
         }
+        SDL_PumpEvents();
 
         /* Redraw Canvas, Update Window */
         asteroids = updateAsteroids(asteroids, spriteSheet);
@@ -229,11 +231,8 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
 
 void updateUserActions(Object * ship)
 {
-    const uint8_t * keystates; 
-    int shipX = 0;
-    int shipY = 0;
-
-    keystates = SDL_GetKeyboardState(NULL);
+    int8_t shipX = 0;
+    int8_t shipY = 0;
 
     /* User Keyboard  */
     if(keystates[SDL_SCANCODE_LEFT] || keystates[SDL_SCANCODE_A])
@@ -371,8 +370,12 @@ int init(char * title)
         return 0;
     }
 
+    /* Initialize Window */
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0));
     SDL_UpdateWindowSurface(window);
+
+    /* Initialize Keystates */
+    keystates = SDL_GetKeyboardState(NULL);
 
     return 1;
 }
