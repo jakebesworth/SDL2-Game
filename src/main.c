@@ -75,6 +75,7 @@ void updateObjectAnimation(Object * obj);
 void updateUserActions(Object * ship);
 Object * updateAsteroids(Object * asteroids, SDL_Surface * image);
 void freeObjects(Object * obj);
+void setup();
 
 /* General Functions */
 char * getDate();
@@ -114,8 +115,7 @@ int main(int argc, char * argv[])
     Object * asteroids = NULL;
 
     /* Setup*/
-    stderr = freopen(ERROR_FILE, "a", stderr);
-    srand(time(NULL));
+    setup();
 
     /* Initialize Window */
     if(!init("Star"))
@@ -177,6 +177,12 @@ int main(int argc, char * argv[])
     SDL_Quit();
 
     return 0;
+}
+
+void setup()
+{
+    FILE * temp = freopen(ERROR_FILE, "a", stderr);
+    srand(time(NULL));
 }
 
 void delayFramesPerSecond(uint32_t timer)

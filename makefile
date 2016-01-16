@@ -1,14 +1,14 @@
 # System Dependancies
 #   Windows
-#   SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-#   SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
+     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
 #
 #   Linux
-    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
+#    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
 #
 #   OS X
-#   SDL_DEVELOPMENT_INC := 
-#   SDL_DEVELOPMENT_DIR := 
+#    SDL_DEVELOPMENT_INC := 
+#    SDL_DEVELOPMENT_DIR := 
 
 
 # Compiler Parts
