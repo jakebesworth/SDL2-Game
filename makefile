@@ -45,3 +45,6 @@ endif
 
 all: $(SRC)
 	$(CC) $(SRC) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(LIBRARY) -o $(OBJ)
+
+valgrind: all
+	valgrind --track-origins=yes ./$(OBJ)
