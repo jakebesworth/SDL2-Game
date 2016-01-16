@@ -47,4 +47,7 @@ all: $(SRC)
 	$(CC) $(SRC) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(LIBRARY) -o $(OBJ)
 
 valgrind: all
-	valgrind --track-origins=yes ./$(OBJ)
+	valgrind --leak-check=full --track-origins=yes ./$(OBJ)
+
+drmemory: all
+	drmemory ./$(OBJ)

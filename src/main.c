@@ -206,6 +206,7 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
 {
     Object * asteroidsRoot;
     Object * asteroid;
+    Object * previousAsteroid;
     uint8_t random;
     uint8_t root = 1;
 
@@ -246,11 +247,17 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
             {
                 asteroidsRoot = asteroids;
             }
+            else
+            {
+                previousAsteroid->next = asteroids;
+            }
 
             asteroid->next = NULL;
             freeObjects(asteroid);
             continue;
         }
+
+        previousAsteroid = asteroids;
 
         moveObject(asteroids, 0, ASTEROID_SPEED);
         asteroids = asteroids->next;
