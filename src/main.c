@@ -3,6 +3,7 @@
 #define __CSTD__
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #endif
 
@@ -43,12 +44,12 @@ typedef enum
     ASTEROID_MEDIUM,
     ASTEROID_LARGE,
     WALL,
-    TYPE_OBJECT_SIZE
-} typeObject;
+    OBJECT_TYPE_SIZE
+} objectType;
 
 typedef struct object
 {
-    typeObject type;
+    objectType type;
     SDL_Surface * image;
     SDL_Rect clip;
     uint16_t subImage;
@@ -63,9 +64,11 @@ SDL_Surface * loadSurface(char * image);
 SDL_Surface * loadSurfaceBack(char * image, uint8_t colourR, uint8_t colourG, uint8_t colourB);
 void applySurface(int x, int y, SDL_Surface * source, SDL_Rect * clip);
 int init(char * title);
+void clearScreen();
+void delayFramesPerSecond(uint32_t timer);
 
 /* Game Functions */
-Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h);
+Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h);
 void moveObject(Object * obj, int x, int y);
 void positionObject(Object * obj, int x, int y);
 void updateObjectAnimation(Object * obj);
@@ -133,10 +136,7 @@ int main(int argc, char * argv[])
         g_timer = SDL_GetTicks();
 
         /* Clear Screen */
-        if(SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0)))
-        {
-            fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
-        }
+        clearScreen();
 
         /* SDL Events */
         while(SDL_PollEvent(&event) != 0)
@@ -165,10 +165,7 @@ int main(int argc, char * argv[])
         SDL_UpdateWindowSurface(window);
 
         /* Frames Per Second */
-        if((SDL_GetTicks() - g_timer) < (1000 / FRAMES_PER_SECOND))
-        {
-            SDL_Delay((1000 / FRAMES_PER_SECOND) - (SDL_GetTicks() - g_timer));
-        }
+        delayFramesPerSecond(g_timer);
     }
 
     /* Clean Up */
@@ -182,8 +179,25 @@ int main(int argc, char * argv[])
     return 0;
 }
 
+void delayFramesPerSecond(uint32_t timer)
+{
+    if((SDL_GetTicks() - timer) < (1000 / FRAMES_PER_SECOND))
+    {
+        SDL_Delay((1000 / FRAMES_PER_SECOND) - (SDL_GetTicks() - timer));
+    }
+}
+
+void clearScreen()
+{
+    if(SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0)))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
+}
+
 Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
 {
+    Object * asteroidsRoot;
     Object * asteroid;
     uint8_t random;
 
@@ -210,23 +224,26 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
         asteroid->next = asteroids;
         asteroids = asteroid;
     }
-    else
-    {
-        asteroid = asteroids;
-    }
+
+    asteroidsRoot = asteroids;
 
     while(asteroids != NULL)
     {
-        if(asteroids->y < 0)
+        if(asteroids->y > (SCREEN_HEIGHT + asteroids->clip.h))
         {
-//            freeObjects(asteroids);
+            asteroid = asteroids;
+            asteroids = asteroids->next;
+
+            asteroid->next = NULL;
+            freeObjects(asteroid);
+            continue;
         }
 
         moveObject(asteroids, 0, ASTEROID_SPEED);
         asteroids = asteroids->next;
     }
 
-    return asteroid;
+    return asteroidsRoot;
 }
 
 void updateUserActions(Object * ship)
@@ -318,7 +335,7 @@ void moveObject(Object * obj, int x, int y)
     applySurface(obj->x, obj->y, obj->image, &clip);
 }
 
-Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, typeObject type, int x, int y, int w, int h)
+Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h)
 {
     Object * obj = NULL;
 
@@ -464,9 +481,12 @@ char * getDate()
 
 void freeObjects(Object * obj)
 {
+    Object * temp = NULL;
+
     while(obj != NULL)
     {
-        free(obj);
+        temp = obj;
         obj = obj->next;
+        free(temp);
     }
 }

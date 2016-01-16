@@ -4,14 +4,16 @@ SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
 
 # Compiler Parts
 CC := gcc
-CFLAGS += -Wall -Werror -pedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow
+CFLAGS += -Wall -Werror -pedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow -g
 OPT := -O2
 
 INCLUDE :=  -I$(SDL_DEVELOPMENT_INC) -Iinclude
 
-# Files
+# Source Files
 SRC_DIR := src/
 SRC := $(SRC_DIR)main.c
+
+# Include Files
 
 # Build Environment
 ifeq ($(OS),Windows_NT)
