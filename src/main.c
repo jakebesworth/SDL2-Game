@@ -114,7 +114,7 @@ int main(int argc, char * argv[])
     Object * asteroids = NULL;
 
     /* Setup*/
-    freopen(ERROR_FILE, "a", stderr);
+    stderr = freopen(ERROR_FILE, "a", stderr);
     srand(time(NULL));
 
     /* Initialize Window */
@@ -312,7 +312,7 @@ void updateUserActions(Object * ship)
 
 void updateObjectAnimation(Object * obj)
 {
-    obj->subImage = ((obj->subImage + 1) >= obj->subImageNumber) ? 0 : obj->subImage++;
+    obj->subImage = ((obj->subImage + 1) >= obj->subImageNumber) ? 0 : (obj->subImage + 1);
 }
 
 void positionObject(Object * obj, int x, int y)
@@ -439,7 +439,7 @@ SDL_Surface * loadSurface(char * image)
     }
     else
     {
-        opt = SDL_ConvertSurface(load, screen->format, NULL);
+        opt = SDL_ConvertSurface(load, screen->format, 0);
         if(opt == NULL)
         {
             fprintf(stderr, "[%s][%s: %d]Warning: Could not optimize image %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
