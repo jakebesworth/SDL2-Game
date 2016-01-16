@@ -182,6 +182,7 @@ int main(int argc, char * argv[])
 void setup()
 {
     FILE * temp = freopen(ERROR_FILE, "a", stderr);
+    (void)temp;
     srand(time(NULL));
 }
 
