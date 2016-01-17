@@ -17,8 +17,14 @@
 #endif
 
 /* SDL Library */
+#ifndef SDL_MAIN_HANDLED
 #define SDL_MAIN_HANDLED
+#endif
+
+#ifndef __SDL__
+#define __SDL__
 #include <SDL.h>
+#endif
 
 /* Local Includes */
 #ifndef __TYPES__

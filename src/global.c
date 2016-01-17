@@ -32,5 +32,3 @@ char * getDate()
 
     return date;
 }
-
-/* ADDING CHANGES TO FILE */

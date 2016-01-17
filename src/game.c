@@ -17,8 +17,10 @@
 #endif
 
 /* SDL Library */
-#define SDL_MAIN_HANDLED
+#ifndef __SDL__
+#define __SDL__
 #include <SDL.h>
+#endif
 
 /* Local Includes */
 #ifndef __TYPES__
@@ -43,8 +45,10 @@
 
 void setup()
 {
+    /* Specifically to avoid return warnings and unused variable warnings */
     FILE * temp = freopen(ERROR_FILE, "a", stderr);
     (void)temp;
+
     srand(time(NULL));
 
     SCREEN_WIDTH = 720;

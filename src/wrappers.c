@@ -8,8 +8,10 @@
 #endif
 
 /* SDL Library */
-#define SDL_MAIN_HANDLED
+#ifndef __SDL__
+#define __SDL__
 #include <SDL.h>
+#endif
 
 #ifndef __WRAPPERS__
 #define __WRAPPERS__
