@@ -1,10 +1,10 @@
 # System Dependancies
 #   Windows
-#     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-#     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
+     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
 #
 #   Linux
-    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
+#    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
 #
 #   OS X
 #    SDL_DEVELOPMENT_INC := 
@@ -20,9 +20,17 @@ INCLUDE :=  -I$(SDL_DEVELOPMENT_INC) -Iinclude
 
 # Source Files
 SRC_DIR := src/
-SRC := $(SRC_DIR)main.c
+MAIN := $(SRC_DIR)main.c
+GLOBAL := $(SRC_DIR)global.c
+WRAPPERS := $(SRC_DIR)wrappers.c
+GAME := $(SRC_DIR)game.c
 
-# Include Files
+# Source Objects
+OBJ_DIR := bin/
+MAIN_OBJ := $(OBJ_DIR)main.o
+GLOBAL_OBJ := $(OBJ_DIR)globals.o
+WRAPPERS_OBJ := $(OBJ_DIR)wrappers.o
+GAME_OBJ := $(OBJ_DIR)game.o
 
 # Build Environment
 ifeq ($(OS),Windows_NT)
@@ -43,11 +51,28 @@ else
     endif
 endif
 
-all: $(SRC)
-	$(CC) $(SRC) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(LIBRARY) -o $(OBJ)
+all: $(OBJ)
+
+$(OBJ): $(GLOBAL_OBJ) $(WRAPPERS_OBJ) $(GAME_OBJ) $(MAIN_OBJ) 
+	$(CC) $(MAIN_OBJ) $(GLOBAL_OBJ) $(WRAPPERS_OBJ) $(GAME_OBJ) -o $(OBJ) $(LIBRARY)
+
+$(MAIN_OBJ): $(MAIN)
+	$(CC) -c $(MAIN) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(MAIN_OBJ) $(LIBRARY)
+
+$(GLOBAL_OBJ): $(GLOBAL)
+	$(CC) -c $(GLOBAL) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GLOBAL_OBJ)
+
+$(WRAPPERS_OBJ): $(WRAPPERS)
+	$(CC) -c $(WRAPPERS) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(WRAPPERS_OBJ) $(LIBRARY)
+
+$(GAME_OBJ): $(GAME)
+	$(CC) -c $(GAME) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GAME_OBJ) $(LIBRARY)
+
+clean:
+	rm -f bin/*
 
 valgrind: all
 	valgrind --leak-check=full --track-origins=yes ./$(OBJ)
 
 drmemory: all
-	drmemory ./$(OBJ)
+	drmemory $(OBJ)
