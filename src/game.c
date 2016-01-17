@@ -49,8 +49,13 @@ void setup()
     FILE * temp = freopen(ERROR_FILE, "a", stderr);
     (void)temp;
 
+    /* Seed srand */
     srand(time(NULL));
+    
+    /* Initialize Keystates */
+    keystates = SDL_GetKeyboardState(NULL);
 
+    /* Constant Logic / initialize */
     SCREEN_WIDTH = 720;
     SCREEN_HEIGHT = 405;
     SCREEN_TOP = (SCREEN_HEIGHT * 0.15);

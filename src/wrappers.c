@@ -51,9 +51,6 @@ int init(char * title)
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0));
     SDL_UpdateWindowSurface(window);
 
-    /* Initialize Keystates */
-    keystates = SDL_GetKeyboardState(NULL);
-
     return 1;
 }
 
