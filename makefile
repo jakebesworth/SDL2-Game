@@ -72,7 +72,7 @@ $(GAME_OBJ): $(GAME)
 	$(CC) -c $(GAME) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GAME_OBJ) $(LIBRARY)
 
 SDL:
-ifneq ($(wildcard $(SDL_DEVELOPMENT_INC)),)
+ifneq ($(wildcard $(SDL_DEVELOPMENT_INC/SDL.h)),)
 	$(error SDL2 development package not found, try $(DOWNLOAD))
 endif
 
