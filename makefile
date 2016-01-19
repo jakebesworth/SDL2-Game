@@ -1,14 +1,14 @@
 # System Dependancies
 #   Windows
-     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+#     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
+#     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
 #
 #   Linux
 #    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
 #
 #   OS X
-#    SDL_DEVELOPMENT_INC := 
-#    SDL_DEVELOPMENT_DIR := 
+    SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
+    SDL_DEVELOPMENT_DIR := ./Library/Frameworks
 
 
 # Compiler Parts
@@ -43,7 +43,7 @@ else
     ifeq ($(UNAME_S), Darwin)
         STD := 
         OBJ := star_osx
-        LIBRARY := -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
+        LIBRARY := -Wl,-rpath,$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
         DOWNLOAD := `downloading SDL2 framework library`
     else ifeq ($(UNAME_S), Linux)
         STD := -std=c99
@@ -60,16 +60,16 @@ $(OBJ): $(GLOBAL_OBJ) $(WRAPPERS_OBJ) $(GAME_OBJ) $(MAIN_OBJ)
 	$(CC) $(MAIN_OBJ) $(GLOBAL_OBJ) $(WRAPPERS_OBJ) $(GAME_OBJ) -o $(OBJ) $(LIBRARY)
 
 $(MAIN_OBJ): $(MAIN)
-	$(CC) -c $(MAIN) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(MAIN_OBJ) $(LIBRARY)
+	$(CC) -c $(MAIN) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(MAIN_OBJ)
 
 $(GLOBAL_OBJ): $(GLOBAL)
 	$(CC) -c $(GLOBAL) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GLOBAL_OBJ)
 
 $(WRAPPERS_OBJ): $(WRAPPERS)
-	$(CC) -c $(WRAPPERS) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(WRAPPERS_OBJ) $(LIBRARY)
+	$(CC) -c $(WRAPPERS) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(WRAPPERS_OBJ)
 
 $(GAME_OBJ): $(GAME)
-	$(CC) -c $(GAME) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GAME_OBJ) $(LIBRARY)
+	$(CC) -c $(GAME) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GAME_OBJ)
 
 SDL:
 ifneq ($(wildcard $(SDL_DEVELOPMENT_INC/SDL.h)),)
@@ -78,6 +78,7 @@ endif
 
 clean:
 	rm -f bin/*
+	rm -f $(OBJ)
 
 valgrind: all
 	valgrind --leak-check=full --track-origins=yes ./$(OBJ)
