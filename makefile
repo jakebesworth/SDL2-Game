@@ -1,10 +1,10 @@
 # System Dependancies
 #   Windows
-     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+#     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
+#     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
 #
 #   Linux
-#    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
+    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
 #
 #   OS X
 #    SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
@@ -67,7 +67,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) -c $< $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(DFLAGS) $(patsubst $(OBJ_DIR)%.o,$(DEPEND_DIR)%.d,$@) -o $@
 
 SDL:
-ifeq ("$(wildcard $(SDL_DEVELOPMENT_INC))","")
+ifeq ($(wildcard $(SDL_DEVELOPMENT_INC)),"")
 	$(error SDL2 development package [$(SDL_DEVELOPMENT_INC)] not found, try $(DOWNLOAD))
 endif
 
