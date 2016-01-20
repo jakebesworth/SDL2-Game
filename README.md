@@ -1,3 +1,34 @@
-# SDL2 Game
+# SDL2 Game - in Development
 
-Currently in development, working on setting the foundation for an SDL2 Game
+## About
+
+---
+
+- Currently working on an C-Make-SDL2 game, something like a top down shooter.
+
+- The foundation is done, directory structure, basic SDL wrappers, Memory leaks and optimization checked, makefile done
+
+---
+
+## Development
+
+---
+
+To work on the source code and build, clone this repository, add your SDL development include and library path to the top of the makefile, and type `make` to build the software
+
+---
+
+## Installing and Running the game
+
+---
+
+Included in the repository are a windows, GNU/Linux and OSX binaries.
+
+- Windows run star_win.exe
+
+- OSX run star_osx
+
+- Linux type `sudo apt-get install libsdl2-2.0-0`
+    run star_linux
+
+---
