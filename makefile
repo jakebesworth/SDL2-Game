@@ -1,36 +1,38 @@
 # System Dependancies
 #   Windows
-#     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-#     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
+     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
 #
 #   Linux
 #    SDL_DEVELOPMENT_INC := /usr/includes/SDL2
 #
 #   OS X
-    SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
-    SDL_DEVELOPMENT_DIR := ./Library/Frameworks
+#    SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
+#    SDL_DEVELOPMENT_DIR := ./Library/Frameworks
 
-
-# Compiler Parts
-CC := gcc
-CFLAGS += -Wall -Werror -pedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow -g
-OPT := -O2
-
-INCLUDE :=  -I$(SDL_DEVELOPMENT_INC) -Iinclude
+DEBUG := -g3
 
 # Source Files
 SRC_DIR := src/
-MAIN := $(SRC_DIR)main.c
-GLOBAL := $(SRC_DIR)global.c
-WRAPPERS := $(SRC_DIR)wrappers.c
-GAME := $(SRC_DIR)game.c
+SOURCE_FILES := $(wildcard $(SRC_DIR)*.c)
 
 # Source Objects
 OBJ_DIR := bin/
-MAIN_OBJ := $(OBJ_DIR)main.o
-GLOBAL_OBJ := $(OBJ_DIR)globals.o
-WRAPPERS_OBJ := $(OBJ_DIR)wrappers.o
-GAME_OBJ := $(OBJ_DIR)game.o
+OBJECT_FILES := $(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)%.o,$(SOURCE_FILES))
+
+# Header Files
+HEADER_DIR := include/
+
+# Depend Files
+DEPEND_DIR := depend/
+DEPEND_FILES := $(patsubst $(SRC_DIR)%.c,$(DEPEND_DIR)%.d,$(SOURCE_FILES))
+
+# Compiler Parts
+CC := gcc
+CFLAGS += -Wall -Werror -pedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow $(DEBUG)
+OPT := -O2 -flto
+INCLUDE :=  -I$(SDL_DEVELOPMENT_INC) -I$(HEADER_DIR)
+DFLAGS := -MMD -MF
 
 # Build Environment
 ifeq ($(OS),Windows_NT)
@@ -54,22 +56,15 @@ else
     endif
 endif
 
+.PHONY: all SDL valgrind drmemory clean
+
 all: SDL $(OBJ)
 
-$(OBJ): $(GLOBAL_OBJ) $(WRAPPERS_OBJ) $(GAME_OBJ) $(MAIN_OBJ) 
-	$(CC) $(MAIN_OBJ) $(GLOBAL_OBJ) $(WRAPPERS_OBJ) $(GAME_OBJ) -o $(OBJ) $(LIBRARY)
+$(OBJ): $(OBJECT_FILES)
+	$(CC) $(STD) $(OPT) $(OBJECT_FILES) -o $(OBJ) $(LIBRARY)
 
-$(MAIN_OBJ): $(MAIN)
-	$(CC) -c $(MAIN) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(MAIN_OBJ)
-
-$(GLOBAL_OBJ): $(GLOBAL)
-	$(CC) -c $(GLOBAL) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GLOBAL_OBJ)
-
-$(WRAPPERS_OBJ): $(WRAPPERS)
-	$(CC) -c $(WRAPPERS) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(WRAPPERS_OBJ)
-
-$(GAME_OBJ): $(GAME)
-	$(CC) -c $(GAME) $(CFLAGS) $(STD) $(OPT) $(INCLUDE) -o $(GAME_OBJ)
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+	$(CC) -c $< $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(DFLAGS) $(patsubst $(OBJ_DIR)%.o,$(DEPEND_DIR)%.d,$@) -o $@
 
 SDL:
 ifneq ($(wildcard $(SDL_DEVELOPMENT_INC/SDL.h)),)
@@ -77,7 +72,8 @@ ifneq ($(wildcard $(SDL_DEVELOPMENT_INC/SDL.h)),)
 endif
 
 clean:
-	rm -f bin/*
+	rm -f $(OBJ_DIR)*
+	rm -f $(DEPEND_DIR)*
 	rm -f $(OBJ)
 
 valgrind: all
@@ -85,3 +81,5 @@ valgrind: all
 
 drmemory: all
 	drmemory $(OBJ)
+
+-include $(DEPEND_FILES)
