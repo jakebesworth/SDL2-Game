@@ -56,7 +56,7 @@ else
     endif
 endif
 
-.PHONY: all SDL valgrind drmemory clean
+.PHONY: all SDL
 
 all: SDL $(OBJ)
 
@@ -67,9 +67,11 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) -c $< $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(DFLAGS) $(patsubst $(OBJ_DIR)%.o,$(DEPEND_DIR)%.d,$@) -o $@
 
 SDL:
-ifneq ($(wildcard $(SDL_DEVELOPMENT_INC/SDL.h)),)
-	$(error SDL2 development package not found, try $(DOWNLOAD))
+ifeq ("$(wildcard $(SDL_DEVELOPMENT_INC))","")
+	$(error SDL2 development package [$(SDL_DEVELOPMENT_INC)] not found, try $(DOWNLOAD))
 endif
+
+.PHONY: valgrind drmemory clean
 
 clean:
 	rm -f $(OBJ_DIR)*
