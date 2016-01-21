@@ -6,3 +6,4 @@ void updateUserActions(Object * ship);
 Object * updateAsteroids(Object * asteroids, SDL_Surface * image);
 void freeObjects(Object * obj);
 void setup();
+int countObjects(Object * obj);

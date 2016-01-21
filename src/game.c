@@ -255,6 +255,20 @@ Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, obj
     return obj;
 }
 
+int countObjects(Object * obj)
+{
+    int count = 0;
+
+    while(obj != NULL)
+    {
+        count++;
+        obj = obj->next;
+    }
+
+    return count;
+}
+
+
 void freeObjects(Object * obj)
 {
     Object * temp = NULL;
