@@ -1,14 +1,14 @@
 /* Language Includes */
-#ifndef __CSTD__
-#define __CSTD__
+#ifndef CSTD_
+#define CSTD_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #endif
 
-#ifndef __CSYSTEM__
-#define __CSYSTEM__
+#ifndef CSYSTEM_
+#define CSYSTEM_
 #include <unistd.h>
 #include <time.h>
 #ifndef F_OK
@@ -17,31 +17,16 @@
 #endif
 
 /* SDL Library */
-#ifndef __SDL__
-#define __SDL__
+#ifndef SDL_
+#define SDL_
 #include <SDL.h>
 #endif
 
 /* Local Includes */
-#ifndef __TYPES__
-#define __TYPES__
 #include "types.h"
-#endif
-
-#ifndef __WRAPPERS__
-#define __WRAPPERS__
 #include "wrappers.h"
-#endif
-
-#ifndef __GAME__
-#define __GAME__
 #include "game.h"
-#endif
-
-#ifndef __GLOBAL__
-#define __GLOBAL__
 #include "global.h"
-#endif
 
 void setup()
 {
@@ -49,7 +34,7 @@ void setup()
     FILE * temp = freopen(ERROR_FILE, "a", stderr);
     (void)temp;
 
-    /* Seed srand */
+    /* Initialize Random Seed */
     srand(time(NULL));
     
     /* Initialize Keystates */
@@ -67,6 +52,18 @@ void setup()
 
     SHIP_SPEED = (7.5 * GAME_TICK_RATIO);
     ASTEROID_SPEED = (1.5 * GAME_TICK_RATIO);
+
+    /* Initialize Window */
+    if(!init("Star"))
+    {
+        exit(0);
+    }
+
+}
+
+Object * updateUserBullets(Object * bullets, SDL_Surface * image)
+{
+    return bullets;
 }
 
 Object * updateAsteroids(Object * asteroids, SDL_Surface * image)

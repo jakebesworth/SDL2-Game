@@ -1,13 +1,13 @@
-#ifndef __CSTD__
-#define __CSTD__
+#ifndef CSTD_
+#define CSTD_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #endif
 
-#ifndef __CSYSTEM__
-#define __CSYSTEM__
+#ifndef CSYSTEM_
+#define CSYSTEM_
 #include <unistd.h>
 #include <time.h>
 #ifndef F_OK

@@ -61,7 +61,7 @@ endif
 all: SDL $(OBJ)
 
 $(OBJ): $(OBJECT_FILES)
-	$(CC) $(STD) $(OPT) $(OBJECT_FILES) -o $(OBJ) $(LIBRARY)
+	$(CC) $(DEBUG) $(STD) $(OPT) $(OBJECT_FILES) -o $(OBJ) $(LIBRARY)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) -c $< $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(DFLAGS) $(patsubst $(OBJ_DIR)%.o,$(DEPEND_DIR)%.d,$@) -o $@
@@ -70,6 +70,8 @@ SDL:
 ifeq ($(wildcard $(SDL_DEVELOPMENT_INC)),)
 	$(error SDL2 development package [$(SDL_DEVELOPMENT_INC)] not found, try $(DOWNLOAD))
 endif
+
+-include $(DEPEND_FILES)
 
 .PHONY: valgrind drmemory clean
 
@@ -83,5 +85,3 @@ valgrind: all
 
 drmemory: all
 	drmemory $(OBJ)
-
--include $(DEPEND_FILES)

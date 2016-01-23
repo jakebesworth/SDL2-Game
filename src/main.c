@@ -1,14 +1,14 @@
 /* Language Includes */
-#ifndef __CSTD__
-#define __CSTD__
+#ifndef CSTD_
+#define CSTD_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #endif
 
-#ifndef __CSYSTEM__
-#define __CSYSTEM__
+#ifndef CSYSTEM_
+#define CSYSTEM_
 #include <unistd.h>
 #include <time.h>
 #ifndef F_OK
@@ -21,31 +21,16 @@
 #define SDL_MAIN_HANDLED
 #endif
 
-#ifndef __SDL__
-#define __SDL__
+#ifndef SDL_
+#define SDL_
 #include <SDL.h>
 #endif
 
 /* Local Includes */
-#ifndef __TYPES__
-#define __TYPES__
 #include "types.h"
-#endif
-
-#ifndef __WRAPPERS__
-#define __WRAPPERS__
 #include "wrappers.h"
-#endif
-
-#ifndef __GAME__
-#define __GAME__
 #include "game.h"
-#endif
-
-#ifndef __GLOBAL__
-#define __GLOBAL__
 #include "global.h"
-#endif
 
 /* Environmental Dependancies */
 #ifdef linux
@@ -81,7 +66,7 @@ int main(int argc, char * argv[])
 {
     /* Game Variables */
     uint8_t exit       = 0;
-    uint32_t  g_timer  = 0;
+    uint32_t g_timer   = 0;
 
     /* SDL Variables */
     SDL_Surface * spriteSheet   = NULL;
@@ -89,18 +74,13 @@ int main(int argc, char * argv[])
 
     /* User Variables */
     Object * ship = NULL;
+    Object * bullets = NULL;
 
     /* NPC Variables */
     Object * asteroids = NULL;
 
     /* Setup Pre-Game Logic and Constants */
     setup();
-
-    /* Initialize Window */
-    if(!init("Star"))
-    {
-        return 0;
-    }
 
     /* Load Bitmaps */
     spriteSheet = loadSurfaceBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
@@ -135,15 +115,19 @@ int main(int argc, char * argv[])
                 }
             }
         }
+
+        /* Load Event Stack */
         SDL_PumpEvents();
 
-        /* Redraw Canvas, Update Window */
+        /* Update Game Objects */
         asteroids = updateAsteroids(asteroids, spriteSheet);
+        bullets = updateUserBullets(bullets, spriteSheet);
         updateUserActions(ship);
 
-        SDL_UpdateWindowSurface(window);
+        /* Redraw Window */
+        updateWindow();
 
-        /* Frames Per Second */
+        /* Frames Per Second Delay */
         delayFramesPerSecond(g_timer);
     }
 

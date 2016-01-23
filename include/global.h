@@ -1,3 +1,13 @@
+/*  
+ * global.h
+ *
+ * 
+ *
+ */
+
+#ifndef GLOBAL_
+#define GLOBAL_
+
 /* File Constants */
 #define IMG_DIR "assets/img/"
 #define ERROR_FILE "logs/error_log"
@@ -21,4 +31,12 @@ extern SDL_Surface * screen;
 extern const uint8_t * keystates; 
 
 /* General Functions */
+
+/*  
+ * 
+ *
+ * @return 
+ *
+ */
 char * getDate();
+#endif

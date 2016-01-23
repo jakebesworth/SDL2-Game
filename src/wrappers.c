@@ -1,6 +1,6 @@
 /* Language Includes */
-#ifndef __CSTD__
-#define __CSTD__
+#ifndef CSTD_
+#define CSTD_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -8,20 +8,14 @@
 #endif
 
 /* SDL Library */
-#ifndef __SDL__
-#define __SDL__
+#ifndef SDL_
+#define SDL_
 #include <SDL.h>
 #endif
 
-#ifndef __WRAPPERS__
-#define __WRAPPERS__
+/* Local Includes */
 #include "wrappers.h"
-#endif
-
-#ifndef __GLOBAL__
-#define __GLOBAL__
 #include "global.h"
-#endif
 
 int init(char * title)
 {
@@ -116,6 +110,14 @@ void applySurface(int x, int y, SDL_Surface * source, SDL_Rect * clip)
     offset.y = y;
 
     SDL_BlitSurface(source, clip, screen, &offset);
+}
+
+void updateWindow()
+{
+    if(SDL_UpdateWindowSurface(window))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not update window surface, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
 }
 
 void delayFramesPerSecond(uint32_t timer)

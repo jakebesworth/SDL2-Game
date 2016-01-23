@@ -1,3 +1,17 @@
+/*  
+ * types.h
+ *
+ * 
+ *
+ */
+
+#ifndef TYPES_
+#define TYPES_
+
+/*  
+ * 
+ *
+ */
 typedef enum
 {
     SHIP,
@@ -8,6 +22,11 @@ typedef enum
     OBJECT_TYPE_SIZE
 } objectType;
 
+
+/*  
+ * Object type
+ *
+ */
 typedef struct object
 {
     objectType type;
@@ -19,4 +38,4 @@ typedef struct object
     int y;
     struct object * next;
 } Object;
-
+#endif
