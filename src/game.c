@@ -87,8 +87,8 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
             asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 96, 32, 96, 96);
         }
 
-        asteroid->x = (int) ((rand() % (SCREEN_WIDTH)) - 32);
-        asteroid->y = -96;
+        asteroid->x = (int) ((rand() % (SCREEN_WIDTH)) - (asteroid->clip.w / 2));
+        asteroid->y = -(asteroid->clip.h);
 
         asteroid->next = asteroids;
         asteroids = asteroid;
@@ -144,8 +144,8 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Surface * image,
         {
             bullet = createObject(image, 0, 2, BULLET_TINY, 0, 144, 16, 16);
 
-            bullet->x = (ship->x + 8);
-            bullet->y = (ship->y - 8);
+            bullet->x = (ship->x + (bullet->clip.w / 2));
+            bullet->y = (ship->y - (bullet->clip.w / 2));
 
             bullet->next = bullets;
             bullets = bullet;
