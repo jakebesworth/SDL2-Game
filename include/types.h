@@ -15,13 +15,23 @@
 typedef enum
 {
     SHIP,
+    BULLET_TINY,
     ASTEROID_SMALL,
     ASTEROID_MEDIUM,
     ASTEROID_LARGE,
-    WALL,
     OBJECT_TYPE_SIZE
 } objectType;
 
+
+/*  
+ * 
+ *
+ */
+typedef enum
+{
+    BULLET_TINY_TIMER,
+    TIMER_TYPE_SIZE
+} timerType;
 
 /*  
  * Object type

@@ -24,6 +24,7 @@ extern float GAME_TICK_RATIO;
 
 extern float SHIP_SPEED;
 extern float ASTEROID_SPEED;
+extern float BULLET_TINY_SPEED;
 
 /* Declare Global SDL Variables */
 extern SDL_Window * window;

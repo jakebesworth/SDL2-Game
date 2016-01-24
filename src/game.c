@@ -52,6 +52,7 @@ void setup()
 
     SHIP_SPEED = (7.5 * GAME_TICK_RATIO);
     ASTEROID_SPEED = (1.5 * GAME_TICK_RATIO);
+    BULLET_TINY_SPEED = (9 * GAME_TICK_RATIO);
 
     /* Initialize Window */
     if(!init("Star"))
@@ -59,11 +60,6 @@ void setup()
         exit(0);
     }
 
-}
-
-Object * updateUserBullets(Object * bullets, SDL_Surface * image)
-{
-    return bullets;
 }
 
 Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
@@ -135,7 +131,67 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
     return asteroidsRoot;
 }
 
-void updateUserActions(Object * ship)
+Object * updateUserBullets(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer)
+{
+    Object * bulletsRoot;
+    Object * bullet;
+    Object * previousBullet;
+    uint8_t root = 1;
+
+    if(timer[BULLET_TINY_TIMER] < SDL_GetTicks())
+    {
+        if(keystates[SDL_SCANCODE_1] || keystates[SDL_SCANCODE_SPACE])
+        {
+            bullet = createObject(image, 0, 2, BULLET_TINY, 0, 144, 16, 16);
+
+            bullet->x = (ship->x + 8);
+            bullet->y = (ship->y - 8);
+
+            bullet->next = bullets;
+            bullets = bullet;
+
+            timer[BULLET_TINY_TIMER] = (SDL_GetTicks() + 150);
+        }
+    }
+
+    bulletsRoot = bullets;
+
+    while(bullets != NULL)
+    {
+        if(bullets->y < -bullets->clip.h)
+        {
+            bullet = bullets;
+            bullets = bullets->next;
+
+            if(root)
+            {
+                bulletsRoot = bullets;
+            }
+            else
+            {
+                previousBullet->next = bullets;
+            }
+
+            bullet->next = NULL;
+            freeObjects(bullet);
+            continue;
+        }
+
+        previousBullet = bullets;
+
+        moveObject(bullets, 0, (-1 * BULLET_TINY_SPEED));
+        bullets = bullets->next;
+
+        if(root)
+        {
+            root = 0;
+        }
+    }
+
+    return bulletsRoot;
+}
+
+void updateUserShipMovement(Object * ship)
 {
     int8_t shipX = 0;
     int8_t shipY = 0;
@@ -197,6 +253,12 @@ void updateUserActions(Object * ship)
     }
 
     moveObject(ship, shipX * SHIP_SPEED, shipY * SHIP_SPEED);
+}
+
+Object * updateUserActions(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer)
+{
+    updateUserShipMovement(ship);
+    return updateUserBullets(ship, bullets, image, timer);
 }
 
 void updateObjectAnimation(Object * obj)

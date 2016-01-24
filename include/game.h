@@ -57,20 +57,35 @@ void updateObjectAnimation(Object * obj);
  * 
  *
  * @param ship
- *
- */
-void updateUserActions(Object * ship);
-
-/*  
- * 
- *
  * @param bullets
  * @param image
+ * @param timer
  *
  * @return 
  *
  */
-Object * updateUserBullets(Object * bullets, SDL_Surface * image);
+Object * updateUserActions(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer);
+
+/*  
+ * 
+ *
+ * @param ship
+ *
+ */
+void updateUserShipMovement(Object * ship);
+
+/*  
+ * 
+ *
+ * @param ship
+ * @param bullets
+ * @param image
+ * @param timer
+ *
+ * @return 
+ *
+ */
+Object * updateUserBullets(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer);
 
 /*  
  * 

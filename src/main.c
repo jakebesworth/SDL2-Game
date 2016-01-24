@@ -56,6 +56,7 @@ float GAME_TICK_RATIO;
 
 float SHIP_SPEED;
 float ASTEROID_SPEED;
+float BULLET_TINY_SPEED;
 
 /* Global SDL Variables */
 SDL_Window * window;
@@ -75,6 +76,7 @@ int main(int argc, char * argv[])
     /* User Variables */
     Object * ship = NULL;
     Object * bullets = NULL;
+    uint32_t userTimer[TIMER_TYPE_SIZE] = {0};
 
     /* NPC Variables */
     Object * asteroids = NULL;
@@ -85,9 +87,10 @@ int main(int argc, char * argv[])
     /* Load Bitmaps */
     spriteSheet = loadSurfaceBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
 
-    /* Load User Object */
+    /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 0, 0, 32, 32);
     positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
+    userTimer[BULLET_TINY_TIMER] = SDL_GetTicks();
 
     while(!exit)
     {
@@ -121,8 +124,7 @@ int main(int argc, char * argv[])
 
         /* Update Game Objects */
         asteroids = updateAsteroids(asteroids, spriteSheet);
-        bullets = updateUserBullets(bullets, spriteSheet);
-        updateUserActions(ship);
+        bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
 
         /* Redraw Window */
         updateWindow();
