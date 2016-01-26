@@ -60,6 +60,7 @@ float BULLET_TINY_SPEED;
 
 /* Global SDL Variables */
 SDL_Window * window;
+SDL_Renderer * renderer;
 SDL_Surface * screen;
 const uint8_t * keystates;
 
@@ -123,8 +124,8 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();
 
         /* Update Game Objects */
-        asteroids = updateAsteroids(asteroids, spriteSheet);
         bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
+        asteroids = updateAsteroids(asteroids, spriteSheet);
 
         /* Redraw Window */
         updateWindow();

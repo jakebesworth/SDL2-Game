@@ -33,6 +33,18 @@ int init(char * title)
         return 0;
     }
 
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    if(renderer == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL Renderer error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+        return 0;
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    }
+
     screen = SDL_GetWindowSurface(window);
 
     if(screen == NULL)
