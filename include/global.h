@@ -1,7 +1,7 @@
 /*  
  * global.h
  *
- * 
+ * All generic functions and global variables declared here
  *
  */
 
@@ -34,9 +34,9 @@ extern const uint8_t * keystates;
 /* General Functions */
 
 /*  
- * 
+ * Get the system date
  *
- * @return 
+ * @return string of the current date
  *
  */
 char * getDate();

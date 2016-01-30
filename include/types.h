@@ -1,7 +1,7 @@
 /*  
  * types.h
  *
- * 
+ * All custom game types and enumerations are defined here
  *
  */
 
@@ -9,7 +9,7 @@
 #define TYPES_
 
 /*  
- * 
+ * Object types to distinguish objects
  *
  */
 typedef enum
@@ -22,9 +22,21 @@ typedef enum
     OBJECT_TYPE_SIZE
 } objectType;
 
+/*  
+ * Game state enumeration states
+ *
+ */
+typedef enum
+{
+    DEFAULT,
+    CUTSCENE,
+    WAVE,
+    PAUSE,
+    GAME_STATE_SIZE
+} gameState;
 
 /*  
- * 
+ * Timer indexes for global timer
  *
  */
 typedef enum
@@ -34,7 +46,7 @@ typedef enum
 } timerType;
 
 /*  
- * Object type
+ * Object definition for game objects
  *
  */
 typedef struct object

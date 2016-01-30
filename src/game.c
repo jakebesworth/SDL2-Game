@@ -217,7 +217,7 @@ void updateUserShipMovement(Object * ship)
     }
 
     /* Updating Ship Animation */
-/*    if(shipX == 0)
+    if(shipX == 0)
     {
         ship->subImage = 0;
     }    
@@ -229,7 +229,7 @@ void updateUserShipMovement(Object * ship)
     {
         ship->subImage = 2;
     }
-*/
+
     /* Setting Ship Boundaries */
     if((ship->x + (shipX * SHIP_SPEED)) < (0 + SCREEN_LEFT))
     {

@@ -68,6 +68,7 @@ int main(int argc, char * argv[])
     /* Game Variables */
     uint8_t exit       = 0;
     uint32_t g_timer   = 0;
+    gameState g_state  = DEFAULT;
 
     /* SDL Variables */
     SDL_Texture * spriteSheet   = NULL;
@@ -112,6 +113,9 @@ int main(int argc, char * argv[])
             {
                 switch(event.key.keysym.sym)
                 {
+                    case SDLK_p:
+                        g_state = (g_state == DEFAULT ? PAUSE : DEFAULT);
+                        break;
                     case SDLK_ESCAPE:
                         exit = 1;
                         break;
@@ -122,9 +126,20 @@ int main(int argc, char * argv[])
         /* Load Event Stack */
         SDL_PumpEvents();
 
-        /* Update Game Objects */
-        bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
-        asteroids = updateAsteroids(asteroids, spriteSheet);
+        if(g_state == DEFAULT)
+        {
+            /* Update Game Objects */
+            bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
+            asteroids = updateAsteroids(asteroids, spriteSheet);
+        }
+        else if(g_state == PAUSE)
+        {
+
+        }
+        else if(g_state == WAVE)
+        {
+
+        }
 
         /* Redraw Window */
         updateWindow();
