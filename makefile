@@ -1,14 +1,33 @@
+#
+#   Makefile software build
+#
+
 # System Dependancies
-#   Windows
-#     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-#     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
-#
-#   Linux
-#    SDL_DEVELOPMENT_INC := /usr/include/SDL2
-#
-#   OS X
-    SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
-    SDL_DEVELOPMENT_DIR := ./Library/Frameworks
+ifeq ($(OS),Windows_NT)
+    SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
+    SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+    STD := -std=c11
+    OBJ := star_win.exe
+    LIBRARY := -L$(SDL_DEVELOPMENT_DIR) -Llib -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2
+    DOWNLOAD := `downloading SDL2 development library`
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S), Darwin)
+        SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
+        SDL_DEVELOPMENT_DIR := ./Library/Frameworks
+        STD := 
+        OBJ := star_osx
+        LIBRARY := -Wl,-rpath,$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
+        DOWNLOAD := `downloading SDL2 framework library`
+    else ifeq ($(UNAME_S), Linux)
+        SDL_DEVELOPMENT_INC := /usr/include/SDL2
+        STD := -std=c99
+        OBJ := star_linux
+        LIBRARY := $(shell sdl2-config --libs)
+        CFLAGS += $(shell sdl2-config --cflags)
+        DOWNLOAD := `sudo apt-get install libsdl2-dev`
+    endif
+endif
 
 DEBUG := -g3
 
@@ -33,28 +52,6 @@ CFLAGS += -Wall -Werror -pedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow $
 OPT := -O2 -flto
 INCLUDE :=  -I$(SDL_DEVELOPMENT_INC) -I$(HEADER_DIR)
 DFLAGS := -MMD -MF
-
-# Build Environment
-ifeq ($(OS),Windows_NT)
-    STD := -std=c11
-    OBJ := star_win.exe
-    LIBRARY := -L$(SDL_DEVELOPMENT_DIR) -Llib -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2
-    DOWNLOAD := `downloading SDL2 development library`
-else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S), Darwin)
-        STD := 
-        OBJ := star_osx
-        LIBRARY := -Wl,-rpath,$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
-        DOWNLOAD := `downloading SDL2 framework library`
-    else ifeq ($(UNAME_S), Linux)
-        STD := -std=c99
-        OBJ := star_linux
-        LIBRARY := $(shell sdl2-config --libs)
-        CFLAGS += $(shell sdl2-config --cflags)
-        DOWNLOAD := `sudo apt-get install libsdl2-dev`
-    endif
-endif
 
 .PHONY: all SDL
 

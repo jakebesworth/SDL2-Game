@@ -59,10 +59,9 @@ void setup()
     {
         exit(0);
     }
-
 }
 
-Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
+Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
 {
     Object * asteroidsRoot;
     Object * asteroid;
@@ -131,7 +130,7 @@ Object * updateAsteroids(Object * asteroids, SDL_Surface * image)
     return asteroidsRoot;
 }
 
-Object * updateUserBullets(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer)
+Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image, uint32_t * timer)
 {
     Object * bulletsRoot;
     Object * bullet;
@@ -255,7 +254,7 @@ void updateUserShipMovement(Object * ship)
     moveObject(ship, shipX * SHIP_SPEED, shipY * SHIP_SPEED);
 }
 
-Object * updateUserActions(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer)
+Object * updateUserActions(Object * ship, Object * bullets, SDL_Texture * image, uint32_t * timer)
 {
     updateUserShipMovement(ship);
     return updateUserBullets(ship, bullets, image, timer);
@@ -273,7 +272,7 @@ void positionObject(Object * obj, int x, int y)
     obj->x = x;
     obj->y = y;
     clip.x += clip.w * obj->subImage;
-    applySurface(obj->x, obj->y, obj->image, &clip);
+    applyTexture(obj->x, obj->y, obj->image, &clip);
 }
 
 void moveObject(Object * obj, int x, int y)
@@ -283,10 +282,10 @@ void moveObject(Object * obj, int x, int y)
     obj->x += x;
     obj->y += y;
     clip.x += clip.w * obj->subImage;
-    applySurface(obj->x, obj->y, obj->image, &clip);
+    applyTexture(obj->x, obj->y, obj->image, &clip);
 }
 
-Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h)
+Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h)
 {
     Object * obj = NULL;
 

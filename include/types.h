@@ -40,7 +40,7 @@ typedef enum
 typedef struct object
 {
     objectType type;
-    SDL_Surface * image;
+    SDL_Texture * image;
     SDL_Rect clip;
     uint16_t subImage;
     uint16_t subImageNumber;

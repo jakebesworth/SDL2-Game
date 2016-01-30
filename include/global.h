@@ -29,7 +29,6 @@ extern float BULLET_TINY_SPEED;
 /* Declare Global SDL Variables */
 extern SDL_Window * window;
 extern SDL_Renderer * renderer;
-extern SDL_Surface * screen;
 extern const uint8_t * keystates; 
 
 /* General Functions */

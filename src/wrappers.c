@@ -29,7 +29,7 @@ int init(char * title)
 
     if(window == NULL)
     {
-        fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL window screen error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+        fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL window error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
         return 0;
     }
 
@@ -42,94 +42,89 @@ int init(char * title)
     }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    }
-
-    screen = SDL_GetWindowSurface(window);
-
-    if(screen == NULL)
-    {
-        fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL screen can't get window surface error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
-        return 0;
+        clearScreen();
     }
 
     /* Initialize Window */
-    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0));
-    SDL_UpdateWindowSurface(window);
+    updateWindow();
 
     return 1;
 }
 
-SDL_Surface * loadSurfaceBack(char * image, uint8_t colourR, uint8_t colourG, uint8_t colourB)
+SDL_Texture * loadTexture(char * image, SDL_Surface * surface)
 {
-    int colorkey;
-    SDL_Surface * opt = loadSurface(image);
-
-    if(opt == NULL)
-    {
-        return NULL;
-    }
-
-    colorkey = SDL_MapRGB(opt->format, colourR, colourG, colourB);
-    SDL_SetColorKey(opt, SDL_TRUE, colorkey);
-
-    return opt;
-}
-
-/* TODO Look into SDL_BlitScaled  function */
-SDL_Surface * loadSurface(char * image)
-{
-    SDL_Surface * opt  = NULL;
-    SDL_Surface * load = NULL;
-
-    if(screen == NULL)
-    {
-        fprintf(stderr, "[%s][%s: %d]Fatal Error: screen NULL\n", getDate(), __FILE__, __LINE__);
-        exit(0);
-    }
-
+    SDL_Texture * texture = NULL;
+    
     if(strstr(image, "bmp") == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Images are not bitmap\n", getDate(), __FILE__, __LINE__);
         return NULL;
     }
-    
-    load = SDL_LoadBMP(image);
 
-    if(load == NULL)
+    if(surface == NULL)
     {
-        fprintf(stderr, "[%s][%s: %d]Warning: Could not load image %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
-    }
-    else
-    {
-        opt = SDL_ConvertSurface(load, screen->format, 0);
-        if(opt == NULL)
+        surface = SDL_LoadBMP(image);
+
+        if(surface == NULL)
         {
-            fprintf(stderr, "[%s][%s: %d]Warning: Could not optimize image %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+            fprintf(stderr, "[%s][%s: %d]Warning: Could not load image %s into surface, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+            return NULL;
         }
-    
-        SDL_FreeSurface(load);
     }
 
-    return opt; 
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    if(texture == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not create texture %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+    }
+
+    SDL_FreeSurface(surface);
+
+    return texture;
 }
 
-void applySurface(int x, int y, SDL_Surface * source, SDL_Rect * clip)
+SDL_Texture * loadTextureBack(char * image, uint8_t colourR, uint8_t colourG, uint8_t colourB)
+{
+    SDL_Texture * texture = NULL;
+    SDL_Surface * surface = NULL;
+
+    surface = SDL_LoadBMP(image);
+
+    if(surface == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not load image %s into surface, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+        return NULL;
+    }
+
+    SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, colourR, colourG, colourB));
+
+    texture = loadTexture(image, surface);
+
+    if(texture == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not create textureBack %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+    }
+
+    return texture;
+}
+
+void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip)
 {
     SDL_Rect offset;
 
     offset.x = x;
     offset.y = y;
 
-    SDL_BlitSurface(source, clip, screen, &offset);
+    if(SDL_RenderCopy(renderer, source, clip, &offset))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not render copy, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
 }
 
 void updateWindow()
 {
-    if(SDL_UpdateWindowSurface(window))
-    {
-        fprintf(stderr, "[%s][%s: %d]Warning: Could not update window surface, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
-    }
+    SDL_RenderPresent(renderer);
 }
 
 void delayFramesPerSecond(uint32_t timer)
@@ -142,8 +137,8 @@ void delayFramesPerSecond(uint32_t timer)
 
 void clearScreen()
 {
-    if(SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0x0, 0x0, 0x0)))
+    if(SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0x0))
     {
-        fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen renderer, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
     }
 }

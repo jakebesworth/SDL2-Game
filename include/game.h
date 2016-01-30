@@ -23,7 +23,7 @@
  * @return 
  *
  */
-Object * createObject(SDL_Surface * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h);
+Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h);
 
 /*  
  * 
@@ -64,7 +64,7 @@ void updateObjectAnimation(Object * obj);
  * @return 
  *
  */
-Object * updateUserActions(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer);
+Object * updateUserActions(Object * ship, Object * bullets, SDL_Texture * image, uint32_t * timer);
 
 /*  
  * 
@@ -85,7 +85,7 @@ void updateUserShipMovement(Object * ship);
  * @return 
  *
  */
-Object * updateUserBullets(Object * ship, Object * bullets, SDL_Surface * image, uint32_t * timer);
+Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image, uint32_t * timer);
 
 /*  
  * 
@@ -96,7 +96,7 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Surface * image,
  * @return 
  *
  */
-Object * updateAsteroids(Object * asteroids, SDL_Surface * image);
+Object * updateAsteroids(Object * asteroids, SDL_Texture * image);
 
 /*  
  * 

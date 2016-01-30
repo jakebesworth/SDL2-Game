@@ -61,7 +61,6 @@ float BULLET_TINY_SPEED;
 /* Global SDL Variables */
 SDL_Window * window;
 SDL_Renderer * renderer;
-SDL_Surface * screen;
 const uint8_t * keystates;
 
 int main(int argc, char * argv[])
@@ -71,7 +70,7 @@ int main(int argc, char * argv[])
     uint32_t g_timer   = 0;
 
     /* SDL Variables */
-    SDL_Surface * spriteSheet   = NULL;
+    SDL_Texture * spriteSheet   = NULL;
     SDL_Event event;
 
     /* User Variables */
@@ -86,7 +85,7 @@ int main(int argc, char * argv[])
     setup();
 
     /* Load Bitmaps */
-    spriteSheet = loadSurfaceBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
+    spriteSheet = loadTextureBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 0, 0, 32, 32);
@@ -135,7 +134,7 @@ int main(int argc, char * argv[])
     }
 
     /* Clean Up */
-    SDL_FreeSurface(spriteSheet);
+    SDL_DestroyTexture(spriteSheet);
     freeObjects(ship);
     freeObjects(asteroids);
 
