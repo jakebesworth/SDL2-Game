@@ -78,7 +78,7 @@ clean:
 	rm -f $(OBJ)
 
 valgrind: all
-	valgrind --leak-check=full --track-origins=yes ./$(OBJ)
+	valgrind --leak-check=yes --show-leak-kinds=all --track-origins=yes ./$(OBJ)
 
 drmemory: all
 	drmemory $(OBJ)

@@ -42,7 +42,7 @@ int init(char * title)
     }
     else
     {
-        clearScreen();
+        SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
     }
 
     /* Initialize Window */
@@ -111,7 +111,7 @@ SDL_Texture * loadTextureBack(char * image, uint8_t colourR, uint8_t colourG, ui
 
 void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip)
 {
-    SDL_Rect offset;
+    SDL_Rect offset = *clip;
 
     offset.x = x;
     offset.y = y;
@@ -137,7 +137,7 @@ void delayFramesPerSecond(uint32_t timer)
 
 void clearScreen()
 {
-    if(SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0x0))
+    if(SDL_RenderClear(renderer))
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen renderer, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
     }
