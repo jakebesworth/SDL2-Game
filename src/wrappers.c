@@ -54,7 +54,7 @@ int init(char * title)
 SDL_Texture * loadTexture(char * image, SDL_Surface * surface)
 {
     SDL_Texture * texture = NULL;
-    
+
     if(strstr(image, "bmp") == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Images are not bitmap\n", getDate(), __FILE__, __LINE__);
