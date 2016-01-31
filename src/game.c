@@ -25,6 +25,7 @@
 /* Local Includes */
 #include "types.h"
 #include "wrappers.h"
+#include "object.h"
 #include "game.h"
 #include "global.h"
 
@@ -43,7 +44,7 @@ void setup()
     /* Constant Logic / initialize */
     SCREEN_WIDTH = 720;
     SCREEN_HEIGHT = 405;
-    SCREEN_TOP = (SCREEN_HEIGHT * 0.15);
+    SCREEN_TOP = (SCREEN_HEIGHT * 0.06);
     SCREEN_BOTTOM = 40;
     SCREEN_LEFT = 5;
     SCREEN_RIGHT = 40;
@@ -54,6 +55,9 @@ void setup()
     ASTEROID_SPEED = (1.5 * GAME_TICK_RATIO);
     BULLET_TINY_SPEED = (9 * GAME_TICK_RATIO);
 
+    /* Global Score */
+    score = 0;
+
     /* Initialize Window */
     if(!init("Star"))
     {
@@ -61,75 +65,27 @@ void setup()
     }
 }
 
-Object * createTextObject(SDL_Texture * image, char * text, objectType type)
+void updateObjectCollision(Object ** ship, Object ** bullets, Object ** asteroids)
 {
-    int i;
-    Object * obj = NULL;
-    Object * objRoot = NULL;
-    uint16_t width = 0;
-    uint16_t height = 0;
-    int textLength = strlen(text);
+    Object * asteroidsRoot = *asteroids;
+    Object * bulletsRoot;
 
-    if(type == FONT_TINY)
+    while(asteroidsRoot != NULL)
     {
-        width = height = 16;
-    }
-    else if(type == FONT_SMALL)
-    {
-        width = height = 32;
-    }
+        bulletsRoot = *bullets;
 
-    for(i = 0; i < textLength; i++)
-    {
-        if(i == 0)
+        if(objectCollision(asteroidsRoot, *ship))
         {
-            obj = createObject(image, 0, 1, type, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height);
-            objRoot = obj;
+            (*ship)->lives--;
         }
-        else
+
+        while(bulletsRoot != NULL)
         {
-            obj->next = createObject(image, 0, 1, type, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height);
-            obj = obj->next;
+            bulletsRoot = bulletsRoot->next;
         }
-    }
 
-    return objRoot;
-}
-
-int getTextX(char c)
-{
-    if(c <= 57)
-    {
-        return (c - 48);
+        asteroidsRoot = asteroidsRoot->next;
     }
-    else if(c <= 108)
-    {
-        return (c - 97);
-    } 
-    else if(c <= 120)
-    {
-        return (c - 109);
-    }
-    else
-    {
-        return (c - 121);
-    }
-}
-
-int getTextY(char c)
-{
-    if(c <= 57 || c >= 121)
-    {
-        return 2;
-    }
-    else if(c >= 109)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    } 
 }
 
 Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
@@ -146,15 +102,15 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
 
         if(random >= 3)
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_SMALL, 0, 32, 32, 32);
+            asteroid = createObject(image, 0, 1, ASTEROID_SMALL, 1, 0, 32, 32, 32);
         }
         else if(random >= 1)
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 32, 32, 64, 64);
+            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 2, 32, 32, 64, 64);
         }
         else
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 96, 32, 96, 96);
+            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 3, 96, 32, 96, 96);
         }
 
         asteroid->x = (int) ((rand() % (SCREEN_WIDTH)) - (asteroid->clip.w / 2));
@@ -212,7 +168,7 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image,
     {
         if(keystates[SDL_SCANCODE_1] || keystates[SDL_SCANCODE_SPACE])
         {
-            bullet = createObject(image, 0, 2, BULLET_TINY, 0, 144, 16, 16);
+            bullet = createObject(image, 0, 2, BULLET_TINY, 1, 0, 144, 16, 16);
 
             bullet->x = (ship->x + (bullet->clip.w / 2));
             bullet->y = (ship->y - (bullet->clip.w / 2));
@@ -334,112 +290,4 @@ Object * updateUserActions(Object * ship, Object * bullets, SDL_Texture * image,
 void updateObjectAnimation(Object * obj)
 {
     obj->subImage = ((obj->subImage + 1) >= obj->subImageNumber) ? 0 : (obj->subImage + 1);
-}
-
-void moveTextObject(Object * obj, int x, int y)
-{
-    SDL_Rect clip;
-    int i = 1;
-
-    while(obj != NULL)
-    {
-        clip = obj->clip;
-
-        obj->x += (x + (obj->clip.w * i++));
-        obj->y += y;
-        clip.x += clip.w * obj->subImage;
-        applyTexture(obj->x, obj->y, obj->image, &clip);
-        obj = obj->next;
-    }
-}
-
-void positionTextObject(Object * obj, int x, int y)
-{
-    SDL_Rect clip;
-    int i = 1;
-
-    while(obj != NULL)
-    {
-        clip = obj->clip;
-
-        obj->x = (x + (obj->clip.w * i++));
-        obj->y = y;
-        clip.x += clip.w * obj->subImage;
-        applyTexture(obj->x, obj->y, obj->image, &clip);
-        obj = obj->next;
-    }
-}
-
-void positionObject(Object * obj, int x, int y)
-{
-    SDL_Rect clip = obj->clip;
-
-    obj->x = x;
-    obj->y = y;
-    clip.x += clip.w * obj->subImage;
-    applyTexture(obj->x, obj->y, obj->image, &clip);
-}
-
-void moveObject(Object * obj, int x, int y)
-{
-    SDL_Rect clip = obj->clip;
-
-    obj->x += x;
-    obj->y += y;
-    clip.x += clip.w * obj->subImage;
-    applyTexture(obj->x, obj->y, obj->image, &clip);
-}
-
-Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h)
-{
-    Object * obj = NULL;
-
-    obj = malloc(sizeof(Object));
-
-    if(obj == NULL)
-    {
-        fprintf(stderr, "[%s][%s: %d]Fatal Error: Memory allocation error\n", getDate(), __FILE__, __LINE__);
-        exit(0);
-    }
-
-    obj->image = image;
-    obj->subImage = subImage;
-    obj->subImageNumber = 3;
-    obj->x = obj->y = 0;
-    obj->type = type;
-
-    obj->clip.x = x;
-    obj->clip.y = y;
-    obj->clip.w = w;
-    obj->clip.h = h;
-
-    obj->next = NULL;
-
-    return obj;
-}
-
-int countObjects(Object * obj)
-{
-    int count = 0;
-
-    while(obj != NULL)
-    {
-        count++;
-        obj = obj->next;
-    }
-
-    return count;
-}
-
-
-void freeObjects(Object * obj)
-{
-    Object * temp = NULL;
-
-    while(obj != NULL)
-    {
-        temp = obj;
-        obj = obj->next;
-        free(temp);
-    }
 }

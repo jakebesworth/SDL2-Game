@@ -9,7 +9,7 @@
 #define TYPES_
 
 /*  
- * Object types to distinguish objects
+ * Types to distinguish objects
  *
  */
 typedef enum
@@ -25,7 +25,7 @@ typedef enum
 } objectType;
 
 /*  
- * Game state enumeration states
+ * Game enumerated states
  *
  */
 typedef enum
@@ -38,7 +38,7 @@ typedef enum
 } gameState;
 
 /*  
- * Timer indexes for global timer
+ * Timer indexes
  *
  */
 typedef enum
@@ -48,7 +48,7 @@ typedef enum
 } timerType;
 
 /*  
- * Object definition for game objects
+ * Definition for game objects
  *
  */
 typedef struct object
@@ -60,6 +60,7 @@ typedef struct object
     uint16_t subImageNumber;
     int x;
     int y;
+    uint16_t lives;
     struct object * next;
 } Object;
 #endif

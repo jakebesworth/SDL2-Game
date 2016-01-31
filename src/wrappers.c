@@ -122,6 +122,14 @@ void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip)
     }
 }
 
+void setTextureAlpha(SDL_Texture * texture, uint8_t alpha)
+{
+    if(SDL_SetTextureAlphaMod(texture, alpha))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not set texture alpha mod, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
+}
+
 void updateWindow()
 {
     SDL_RenderPresent(renderer);

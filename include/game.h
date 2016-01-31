@@ -1,7 +1,7 @@
 /*  
  * game.h
  *
- * All game functions go here
+ * Game logic and orginization functions go here
  *
  */
 
@@ -9,93 +9,14 @@
 #define GAME_
 
 /*  
- * Create a text object from a string
+ * Update all object collisions
  *
- * @param image     The SDL Texture to use
- * @param text      The string to build from
- * @param type      The type of font (tiny, small, large...)
- *
- * @return a text object, a chain of character objects
+ * @param ship      Ship object to check collisions
+ * @param bullets   Bullets object to check collisions
+ * @param asteroids Asteroids object to check collisions
  *
  */
-Object * createTextObject(SDL_Texture * image, char * text, objectType type);
-
-/*  
- * Get the text X position in a font-sheet
- *
- * @param c     The character to check against
- *
- * @return      The x index of where the character is on the font-sheet
- *
- */
-int getTextX(char c);
-
-/*  
- * Get the text Y position in a font-sheet
- *
- * @param c     The character to check against
- *
- * @return      The y index of where the character is on the font-sheet
- *
- */
-int getTextY(char c);
-
-/*  
- * Move a text object chain relative to x and y
- *
- * @param obj       The text object chain to move
- * @param x         The relative x position to move to
- * @param y         The relative y position to move to
- *
- */
-void moveTextObject(Object * obj, int x, int y);
-
-/*  
- * Position a text object chain absolutely to x and y
- *
- * @param obj       The text object chain to move
- * @param x         The relative x position to move to
- * @param y         The relative y position to move to
- *
- */
-void positionTextObject(Object * obj, int x, int y);
-
-/*  
- * Create a new object
- *
- * @param image             The object texture to use (already instantiated)
- * @param subImage          The default animation subimage
- * @param subImageNumber    The number of total subimages in the spritesheet
- * @param type              The object type
- * @param x                 The x position on the spritesheet where the image starts
- * @param y                 The y position on the spritesheet where the image starts
- * @param w                 The image width (used for animation subimages)
- * @param h                 The image height (used for animation subimages)
- *
- * @return the newly created object
- *
- */
-Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, int x, int y, int w, int h);
-
-/*  
- * Move an object relative x and y coordinates and set new object coordinates
- *
- * @param obj   The object to move
- * @param x     The x coordinate to move relatively
- * @param y     The y coordinate to move relatively
- *
- */
-void moveObject(Object * obj, int x, int y);
-
-/*  
- * Position the object at absolute x and y
- *
- * @param obj   The object to position
- * @param x     The absolute x coordinate
- * @param y     The absolute y coordinate
- *
- */
-void positionObject(Object * obj, int x, int y);
+void updateObjectCollision(Object ** ship, Object ** bullets, Object ** asteroids);
 
 /*  
  * Update an objects subimage to the next one in the chain
@@ -151,26 +72,8 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image,
 Object * updateAsteroids(Object * asteroids, SDL_Texture * image);
 
 /*  
- * Free object chain
- *
- * @param obj   The object chain to be freed
- *
- */
-void freeObjects(Object * obj);
-
-/*  
  * Game setup function, setup game settings and constants and initialize SDL2
  *
  */
 void setup();
-
-/*  
- * Count the object chain
- *
- * @param obj   The object chain to count
- *
- * @return number of objects in the chain
- *
- */
-int countObjects(Object * obj);
 #endif

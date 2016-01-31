@@ -12,6 +12,7 @@
 #define IMG_DIR "assets/img/"
 #define FONT_DIR "assets/fonts/"
 #define ERROR_FILE "logs/error_log"
+#define BUFFER_SIZE 2000
 
 /* Declare Numeric Game Constants */
 extern uint16_t SCREEN_WIDTH;
@@ -31,6 +32,7 @@ extern float BULLET_TINY_SPEED;
 extern SDL_Window * window;
 extern SDL_Renderer * renderer;
 extern const uint8_t * keystates; 
+extern uint32_t score;
 
 /* General Functions */
 

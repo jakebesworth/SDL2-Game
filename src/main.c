@@ -29,8 +29,10 @@
 /* Local Includes */
 #include "types.h"
 #include "wrappers.h"
+#include "object.h"
 #include "game.h"
 #include "global.h"
+#include "display.h"
 
 /* Environmental Dependancies */
 #ifdef linux
@@ -62,6 +64,7 @@ float BULLET_TINY_SPEED;
 SDL_Window * window;
 SDL_Renderer * renderer;
 const uint8_t * keystates;
+uint32_t score; 
 
 int main(int argc, char * argv[])
 {
@@ -73,6 +76,7 @@ int main(int argc, char * argv[])
 
     /* SDL Variables */
     SDL_Texture * spriteSheet = NULL;
+    SDL_Texture * fontTiny = NULL;
     SDL_Texture * fontSmall = NULL;
     SDL_Event event;
 
@@ -89,11 +93,12 @@ int main(int argc, char * argv[])
 
     /* Load Bitmaps */
     spriteSheet = loadTextureBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
+    fontTiny = loadTextureBack(FONT_DIR "font-tiny.bmp", 0x0, 0x0, 0x0);
     fontSmall = loadTextureBack(FONT_DIR "font-small.bmp", 0x0, 0x0, 0x0);
     pause = createTextObject(fontSmall, "pause", FONT_SMALL);
 
     /* Load User Objects */
-    ship = createObject(spriteSheet, 0, 3, SHIP, 0, 0, 32, 32);
+    ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);
     positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
     userTimer[BULLET_TINY_TIMER] = SDL_GetTicks();
 
@@ -130,16 +135,20 @@ int main(int argc, char * argv[])
         /* Load Event Stack */
         SDL_PumpEvents();
 
+        /* Default game state, player playing the game */
         if(g_state == DEFAULT)
         {
-            /* Update Game Objects */
             bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
             asteroids = updateAsteroids(asteroids, spriteSheet);
+            updateObjectCollision(&ship, &bullets, &asteroids);
+            displayHUD(ship, fontTiny);
         }
+        /* Game Paused */
         else if(g_state == PAUSE)
         {
             positionTextObject(pause, (SCREEN_WIDTH - SCREEN_RIGHT - 160) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16) / 2);
         }
+        /* Introduction to new waves */
         else if(g_state == WAVE)
         {
 
@@ -152,9 +161,12 @@ int main(int argc, char * argv[])
         delayFramesPerSecond(g_timer);
     }
 
-    /* Clean Up */
+    /* Clean Up - think of a better way to do this*/
     SDL_DestroyTexture(spriteSheet);
+    SDL_DestroyTexture(fontSmall);
+    SDL_DestroyTexture(fontTiny);
     freeObjects(ship);
+    freeObjects(pause);
     freeObjects(asteroids);
 
     SDL_DestroyRenderer(renderer);

@@ -8,6 +8,14 @@
 #ifndef WRAPPERS_
 #define WRAPPERS_
 
+/*  
+ * Set the alpha layer onto a texture
+ *
+ * @param texture   The texture to set alpha to
+ * @param alpha     The alpha number 0-255
+ *
+ */
+void setTextureAlpha(SDL_Texture * texture, uint8_t alpha);
 
 /*  
  * Load new SDL Texture
