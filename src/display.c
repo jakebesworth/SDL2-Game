@@ -17,7 +17,24 @@
 #include "types.h"
 #include "global.h"
 #include "object.h"
+#include "wrappers.h"
 #include "display.h"
+
+void displayGameOver(SDL_Texture * font)
+{
+    clearScreen();
+    displayTextMiddle(font, "game over");
+    updateWindow();
+    SDL_Delay(2 * 1000);
+}
+
+void displayTextMiddle(SDL_Texture * font, char * text)
+{
+    Object * temp = createTextObject(font, text, FONT_SMALL);
+
+    positionTextObject(temp, (SCREEN_WIDTH - (strlen(text) * temp->clip.w)) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16) / 2);
+    freeObjects(temp);
+}
             
 void displayHUD(Object * ship, SDL_Texture * font)
 {

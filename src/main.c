@@ -7,15 +7,6 @@
 #include <string.h>
 #endif
 
-#ifndef CSYSTEM_
-#define CSYSTEM_
-#include <unistd.h>
-#include <time.h>
-#ifndef F_OK
-#define F_OK 0
-#endif
-#endif
-
 /* SDL Library */
 #ifndef SDL_MAIN_HANDLED
 #define SDL_MAIN_HANDLED
@@ -72,7 +63,6 @@ int main(int argc, char * argv[])
     uint8_t exit       = 0;
     uint32_t g_timer   = 0;
     gameState g_state  = DEFAULT;
-    Object * pause = NULL;
 
     /* SDL Variables */
     SDL_Texture * spriteSheet = NULL;
@@ -95,7 +85,6 @@ int main(int argc, char * argv[])
     spriteSheet = loadTextureBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
     fontTiny = loadTextureBack(FONT_DIR "font-tiny.bmp", 0x0, 0x0, 0x0);
     fontSmall = loadTextureBack(FONT_DIR "font-small.bmp", 0x0, 0x0, 0x0);
-    pause = createTextObject(fontSmall, "pause", FONT_SMALL);
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);
@@ -138,6 +127,12 @@ int main(int argc, char * argv[])
         /* Default game state, player playing the game */
         if(g_state == DEFAULT)
         {
+            if(ship->lives <= 0)
+            {
+                exit = 1;
+                continue;
+            }
+
             bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
             asteroids = updateAsteroids(asteroids, spriteSheet);
             updateObjectCollision(&ship, &bullets, &asteroids);
@@ -146,7 +141,7 @@ int main(int argc, char * argv[])
         /* Game Paused */
         else if(g_state == PAUSE)
         {
-            positionTextObject(pause, (SCREEN_WIDTH - SCREEN_RIGHT - 160) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16) / 2);
+            displayTextMiddle(fontSmall, "pause");
         }
         /* Introduction to new waves */
         else if(g_state == WAVE)
@@ -161,12 +156,17 @@ int main(int argc, char * argv[])
         delayFramesPerSecond(g_timer);
     }
 
+    /* Game Over */
+    if(ship->lives <= 0)
+    {
+        displayGameOver(fontSmall);
+    }
+
     /* Clean Up - think of a better way to do this*/
     SDL_DestroyTexture(spriteSheet);
     SDL_DestroyTexture(fontSmall);
     SDL_DestroyTexture(fontTiny);
     freeObjects(ship);
-    freeObjects(pause);
     freeObjects(asteroids);
 
     SDL_DestroyRenderer(renderer);

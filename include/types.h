@@ -60,7 +60,7 @@ typedef struct object
     uint16_t subImageNumber;
     int x;
     int y;
-    uint16_t lives;
+    int16_t lives;
     struct object * next;
 } Object;
 #endif

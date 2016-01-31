@@ -77,10 +77,40 @@ void updateObjectCollision(Object ** ship, Object ** bullets, Object ** asteroid
         if(objectCollision(asteroidsRoot, *ship))
         {
             (*ship)->lives--;
+            asteroidsRoot->lives = 0;
         }
 
         while(bulletsRoot != NULL)
         {
+            if(objectCollision(asteroidsRoot, bulletsRoot))
+            {
+                asteroidsRoot->lives--;
+                bulletsRoot->lives = 0;
+
+                if(asteroidsRoot->lives <= 0)
+                {
+                    if(asteroidsRoot->type == ASTEROID_SMALL)
+                    {
+                        score += 1;
+                    }
+                    else if(asteroidsRoot->type == ASTEROID_MEDIUM)
+                    {
+                        score += 2;
+                    }
+                    else if(asteroidsRoot->type == ASTEROID_LARGE)
+                    {
+                        score += 3;
+                    }
+                }
+                else
+                {
+                    if(bulletsRoot->type == BULLET_TINY)
+                    {
+                        score++;
+                    }
+                }
+            }
+
             bulletsRoot = bulletsRoot->next;
         }
 
@@ -106,11 +136,11 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
         }
         else if(random >= 1)
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 2, 32, 32, 64, 64);
+            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 3, 32, 32, 64, 64);
         }
         else
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 3, 96, 32, 96, 96);
+            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 6, 96, 32, 96, 96);
         }
 
         asteroid->x = (int) ((rand() % (SCREEN_WIDTH)) - (asteroid->clip.w / 2));
@@ -124,7 +154,7 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
 
     while(asteroids != NULL)
     {
-        if(asteroids->y > (SCREEN_HEIGHT + asteroids->clip.h))
+        if(asteroids->y > (SCREEN_HEIGHT + asteroids->clip.h) || asteroids->lives <= 0)
         {
             asteroid = asteroids;
             asteroids = asteroids->next;
@@ -184,7 +214,7 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image,
 
     while(bullets != NULL)
     {
-        if(bullets->y < -bullets->clip.h)
+        if(bullets->y <= SCREEN_TOP || bullets->lives <= 0)
         {
             bullet = bullets;
             bullets = bullets->next;
