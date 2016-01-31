@@ -19,6 +19,8 @@ typedef enum
     ASTEROID_SMALL,
     ASTEROID_MEDIUM,
     ASTEROID_LARGE,
+    FONT_TINY,
+    FONT_SMALL,
     OBJECT_TYPE_SIZE
 } objectType;
 

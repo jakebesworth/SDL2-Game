@@ -9,6 +9,58 @@
 #define GAME_
 
 /*  
+ * Create a text object from a string
+ *
+ * @param image     The SDL Texture to use
+ * @param text      The string to build from
+ * @param type      The type of font (tiny, small, large...)
+ *
+ * @return a text object, a chain of character objects
+ *
+ */
+Object * createTextObject(SDL_Texture * image, char * text, objectType type);
+
+/*  
+ * Get the text X position in a font-sheet
+ *
+ * @param c     The character to check against
+ *
+ * @return      The x index of where the character is on the font-sheet
+ *
+ */
+int getTextX(char c);
+
+/*  
+ * Get the text Y position in a font-sheet
+ *
+ * @param c     The character to check against
+ *
+ * @return      The y index of where the character is on the font-sheet
+ *
+ */
+int getTextY(char c);
+
+/*  
+ * Move a text object chain relative to x and y
+ *
+ * @param obj       The text object chain to move
+ * @param x         The relative x position to move to
+ * @param y         The relative y position to move to
+ *
+ */
+void moveTextObject(Object * obj, int x, int y);
+
+/*  
+ * Position a text object chain absolutely to x and y
+ *
+ * @param obj       The text object chain to move
+ * @param x         The relative x position to move to
+ * @param y         The relative y position to move to
+ *
+ */
+void positionTextObject(Object * obj, int x, int y);
+
+/*  
  * Create a new object
  *
  * @param image             The object texture to use (already instantiated)

@@ -61,6 +61,77 @@ void setup()
     }
 }
 
+Object * createTextObject(SDL_Texture * image, char * text, objectType type)
+{
+    int i;
+    Object * obj = NULL;
+    Object * objRoot = NULL;
+    uint16_t width = 0;
+    uint16_t height = 0;
+    int textLength = strlen(text);
+
+    if(type == FONT_TINY)
+    {
+        width = height = 16;
+    }
+    else if(type == FONT_SMALL)
+    {
+        width = height = 32;
+    }
+
+    for(i = 0; i < textLength; i++)
+    {
+        if(i == 0)
+        {
+            obj = createObject(image, 0, 1, type, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height);
+            objRoot = obj;
+        }
+        else
+        {
+            obj->next = createObject(image, 0, 1, type, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height);
+            obj = obj->next;
+        }
+    }
+
+    return objRoot;
+}
+
+int getTextX(char c)
+{
+    if(c <= 57)
+    {
+        return (c - 48);
+    }
+    else if(c <= 108)
+    {
+        return (c - 97);
+    } 
+    else if(c <= 120)
+    {
+        return (c - 109);
+    }
+    else
+    {
+        return (c - 121);
+    }
+}
+
+int getTextY(char c)
+{
+    if(c <= 57 || c >= 121)
+    {
+        return 2;
+    }
+    else if(c >= 109)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    } 
+}
+
 Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
 {
     Object * asteroidsRoot;
@@ -263,6 +334,40 @@ Object * updateUserActions(Object * ship, Object * bullets, SDL_Texture * image,
 void updateObjectAnimation(Object * obj)
 {
     obj->subImage = ((obj->subImage + 1) >= obj->subImageNumber) ? 0 : (obj->subImage + 1);
+}
+
+void moveTextObject(Object * obj, int x, int y)
+{
+    SDL_Rect clip;
+    int i = 1;
+
+    while(obj != NULL)
+    {
+        clip = obj->clip;
+
+        obj->x += (x + (obj->clip.w * i++));
+        obj->y += y;
+        clip.x += clip.w * obj->subImage;
+        applyTexture(obj->x, obj->y, obj->image, &clip);
+        obj = obj->next;
+    }
+}
+
+void positionTextObject(Object * obj, int x, int y)
+{
+    SDL_Rect clip;
+    int i = 1;
+
+    while(obj != NULL)
+    {
+        clip = obj->clip;
+
+        obj->x = (x + (obj->clip.w * i++));
+        obj->y = y;
+        clip.x += clip.w * obj->subImage;
+        applyTexture(obj->x, obj->y, obj->image, &clip);
+        obj = obj->next;
+    }
 }
 
 void positionObject(Object * obj, int x, int y)

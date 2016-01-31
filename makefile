@@ -8,7 +8,7 @@ ifeq ($(OS),Windows_NT)
     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
     STD := -std=c11
     OBJ := star_win.exe
-    LIBRARY := -L$(SDL_DEVELOPMENT_DIR) -Llib -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2
+    LIBRARY := -L$(SDL_DEVELOPMENT_DIR) -Llib -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2
     DOWNLOAD := `downloading SDL2 development library`
 else
     UNAME_S := $(shell uname -s)
@@ -29,6 +29,7 @@ else
     endif
 endif
 
+# development (3), and production (0)
 DEBUG := -g3
 
 # Source Files

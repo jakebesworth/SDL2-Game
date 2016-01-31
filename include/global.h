@@ -8,8 +8,9 @@
 #ifndef GLOBAL_
 #define GLOBAL_
 
-/* File Constants */
+/* File Paths */
 #define IMG_DIR "assets/img/"
+#define FONT_DIR "assets/fonts/"
 #define ERROR_FILE "logs/error_log"
 
 /* Declare Numeric Game Constants */

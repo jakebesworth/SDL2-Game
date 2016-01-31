@@ -69,9 +69,11 @@ int main(int argc, char * argv[])
     uint8_t exit       = 0;
     uint32_t g_timer   = 0;
     gameState g_state  = DEFAULT;
+    Object * pause = NULL;
 
     /* SDL Variables */
-    SDL_Texture * spriteSheet   = NULL;
+    SDL_Texture * spriteSheet = NULL;
+    SDL_Texture * fontSmall = NULL;
     SDL_Event event;
 
     /* User Variables */
@@ -87,6 +89,8 @@ int main(int argc, char * argv[])
 
     /* Load Bitmaps */
     spriteSheet = loadTextureBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
+    fontSmall = loadTextureBack(FONT_DIR "font-small.bmp", 0x0, 0x0, 0x0);
+    pause = createTextObject(fontSmall, "pause", FONT_SMALL);
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 0, 0, 32, 32);
@@ -134,7 +138,7 @@ int main(int argc, char * argv[])
         }
         else if(g_state == PAUSE)
         {
-
+            positionTextObject(pause, (SCREEN_WIDTH - SCREEN_RIGHT - 160) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16) / 2);
         }
         else if(g_state == WAVE)
         {

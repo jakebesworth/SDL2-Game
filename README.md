@@ -1,18 +1,35 @@
-# SDL2 Game - in Development
+# SDL2 Spaceship Game - in Development
 
 ## About
 
+- Currently working on an C, Make, SDL2 game
 
-- Currently working on an Make, C (SDL2) game, something like a top down shooter.
+#### What is done so far?
 
-- The foundation is done, directory structure, basic SDL wrappers, Memory leaks and optimization checked, makefile done
+- The foundation, wrapper functions and basic game structure is done
 
 ---
 
 ## Development
 
 
-To work on the source code and build, clone this repository, add your SDL development include and library path to the top of the makefile, and type `make` to build the software
+To work on the project:
+
+Clone
+
+```
+git clone https://github.com/jakebesworth/SDL2-Game.git
+```
+
+Windows and non-Debian users edit the filepath of your SDL development environment in the makefile
+```
+vi makefile
+```
+
+Build the software
+```
+make
+```
 
 ---
 
@@ -21,9 +38,49 @@ To work on the source code and build, clone this repository, add your SDL develo
 
 Included in the repository are a windows, GNU/Linux and OSX binaries.
 
-- Windows run star_win.exe
+Windows
+```
+star_win.exe
+```
 
-- OSX run star_osx
+OSX
+```
+./star_osx
+```
 
-- Linux type `sudo apt-get install libsdl2-dev`
-    run star_linux
+Linux
+```
+sudo apt-get install libsdl2-dev
+
+./star_linux
+```
+---
+
+## Game Controls
+
+Move
+```
+Up, Down, Left and Right arrows, or wasd keys
+```
+
+Shoot
+```
+Spacebar and or 0-9
+```
+
+Pause
+```
+p key
+```
+
+Exit
+```
+Escape key
+```
+
+---
+
+## Screenshots
+
+
+![alt tag](https://raw.githubusercontent.com/jakebesworth/SDL2-game/master/assets/examples/game.png)
