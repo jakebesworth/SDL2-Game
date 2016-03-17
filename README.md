@@ -2,59 +2,23 @@
 
 ## About
 
-- Currently working on an C, Make, SDL2 game
+- A simple, light multiplatform C, Make, SDL2 desktop game
 
-#### What is done so far?
+## What is done so far?
 
 - The foundation, wrapper functions and basic game structure is done
 
----
-
-## Development
-
-
-To work on the project:
-
-Clone
-
-```
-git clone https://github.com/jakebesworth/SDL2-Game.git
-```
-
-Windows and non-Debian users edit the filepath of your SDL development environment in the makefile
-```
-vi makefile
-```
+## Installing and Running the game
 
 Build the software
 ```
 make
 ```
 
----
-
-## Installing and Running the game
-
-
-Included in the repository are a windows, GNU/Linux and OSX binaries.
-
-Windows
+Run the game
 ```
-star_win.exe
+./star
 ```
-
-OSX
-```
-./star_osx
-```
-
-Linux
-```
-sudo apt-get install libsdl2-dev
-
-./star_linux
-```
----
 
 ## Game Controls
 
@@ -77,8 +41,6 @@ Exit
 ```
 Escape key
 ```
-
----
 
 ## Screenshots
 

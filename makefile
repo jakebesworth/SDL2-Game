@@ -7,7 +7,7 @@ ifeq ($(OS),Windows_NT)
     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
     STD := -std=c11
-    OBJ := star_win.exe
+    OBJ := star.exe
     LIBRARY := -L$(SDL_DEVELOPMENT_DIR) -Llib -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2
     DOWNLOAD := `downloading SDL2 development library`
 else
@@ -16,13 +16,13 @@ else
         SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
         SDL_DEVELOPMENT_DIR := ./Library/Frameworks
         STD := 
-        OBJ := star_osx
+        OBJ := star
         LIBRARY := -Wl,-rpath,$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
         DOWNLOAD := `downloading SDL2 framework library`
     else ifeq ($(UNAME_S), Linux)
         SDL_DEVELOPMENT_INC := /usr/include/SDL2
         STD := -std=c99
-        OBJ := star_linux
+        OBJ := star
         LIBRARY := $(shell sdl2-config --libs)
         CFLAGS += $(shell sdl2-config --cflags)
         DOWNLOAD := `sudo apt-get install libsdl2-dev`

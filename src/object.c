@@ -21,7 +21,7 @@
 
 int objectCollision(Object * obj1, Object * obj2)
 {
-    if(((obj1->x + obj1->clip.w) > obj2->x) && ((obj1->y + obj1->clip.h) > obj2->y) && ((obj2->x + obj2->clip.w) > obj1->x) && ((obj2->y + obj2->clip.h) > obj1->y))
+    if(((obj1->x + obj1->clip.w) >= obj2->x) && ((obj1->y + obj1->clip.h) >= obj2->y) && ((obj2->x + obj2->clip.w) >= obj1->x) && ((obj2->y + obj2->clip.h) >= obj1->y))
     {
         return 1;
     }

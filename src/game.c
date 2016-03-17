@@ -48,12 +48,12 @@ void setup()
     SCREEN_BOTTOM = 40;
     SCREEN_LEFT = 5;
     SCREEN_RIGHT = 40;
-    FRAMES_PER_SECOND = 60; /* Up to 144 */
+    FRAMES_PER_SECOND = 60.0; /* Up to 144 */
     GAME_TICK_RATIO = (60.0 / FRAMES_PER_SECOND);
 
     SHIP_SPEED = (7.5 * GAME_TICK_RATIO);
     ASTEROID_SPEED = (1.5 * GAME_TICK_RATIO);
-    BULLET_TINY_SPEED = (9 * GAME_TICK_RATIO);
+    BULLET_TINY_SPEED = (9.0 * GAME_TICK_RATIO);
 
     /* Global Score */
     score = 0;
