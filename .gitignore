@@ -1,6 +1,7 @@
+.DS_STORE
 *.xcf
 *.o
 *.d
-logs/error_log
-.DS_STORE
+*.exe
+logs/*
 star

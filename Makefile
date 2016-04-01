@@ -1,30 +1,70 @@
 #
-#   Makefile software build
+#   Makefile
+#
+#   Description
+#       Make tool build for SDL2-Game
+#
+#   Author
+#       Jake Besworth
 #
 
 # System Dependancies
+
+# Windows Dependant Variables
 ifeq ($(OS),Windows_NT)
+    # SDL Development include file and directory
     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
     SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+
+    # GNU Compiler Standard
     STD := -std=c11
+
+    # Binary File
     OBJ := star.exe
+
+    # Library Flags
     LIBRARY := -L$(SDL_DEVELOPMENT_DIR) -Llib -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2
+
+    # Download Message
     DOWNLOAD := `downloading SDL2 development library`
 else
+    #UNAME Shell Variable
     UNAME_S := $(shell uname -s)
+
+    # OS X Dependant Variables
     ifeq ($(UNAME_S), Darwin)
+        # SDL Development include file and directory
         SDL_DEVELOPMENT_INC := ./Library/Frameworks/SDL2.framework/Headers
         SDL_DEVELOPMENT_DIR := ./Library/Frameworks
-        STD := 
+
+        # GNU Compiler Standard - Clang does not have standard
+        STD := -std=gnu11
+
+        # Binary File
         OBJ := star
+
+        # Library Flags
         LIBRARY := -Wl,-rpath,$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
+
+        # Download Message
         DOWNLOAD := `downloading SDL2 framework library`
+
+    # GNU/Linux Depedant Variables
     else ifeq ($(UNAME_S), Linux)
+        # SDL Development include file and directory
         SDL_DEVELOPMENT_INC := /usr/include/SDL2
+
+        # GNU Compiler Standard - Clang does not have standard
         STD := -std=c11
+
+        # Binary File
         OBJ := star
+
+        # Library and C Compiler Flags
         LIBRARY := $(shell sdl2-config --libs)
         CFLAGS += $(shell sdl2-config --cflags)
+
+        # Download Message
         DOWNLOAD := `sudo apt-get install libsdl2-dev`
     endif
 endif
@@ -47,11 +87,19 @@ HEADER_DIR := include/
 DEPEND_DIR := depend/
 DEPEND_FILES := $(patsubst $(SRC_DIR)%.c,$(DEPEND_DIR)%.d,$(SOURCE_FILES))
 
-# Compiler Parts
+# Compiler
 CC := gcc
+
+# C Compiler Flags
 CFLAGS += -Wall -Werror -pedantic -Wshadow -Wstrict-aliasing -Wstrict-overflow $(DEBUG)
+
+# Optimizations
 OPT := -O2 -flto
+
+# Include directories
 INCLUDE :=  -I$(SDL_DEVELOPMENT_INC) -I$(HEADER_DIR)
+
+# Dependency Flags
 DFLAGS := -MMD -MF
 
 .PHONY: all SDL
@@ -64,6 +112,7 @@ $(OBJ): $(OBJECT_FILES)
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) -c $< $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(DFLAGS) $(patsubst $(OBJ_DIR)%.o,$(DEPEND_DIR)%.d,$@) -o $@
 
+# SDL Library Check
 SDL:
 ifeq ($(wildcard $(SDL_DEVELOPMENT_INC)),)
 	$(error SDL2 development package [$(SDL_DEVELOPMENT_INC)] not found, try $(DOWNLOAD))

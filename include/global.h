@@ -9,7 +9,8 @@
 #define GLOBAL_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /* File Paths */
