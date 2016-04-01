@@ -8,6 +8,10 @@
 #ifndef TYPES_
 #define TYPES_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*  
  * Types to distinguish objects
  *
@@ -63,4 +67,9 @@ typedef struct object
     int16_t lives;
     struct object * next;
 } Object;
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

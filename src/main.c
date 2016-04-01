@@ -1,21 +1,15 @@
-/* Language Includes */
-#ifndef CSTD_
-#define CSTD_
+/* Standard Includes */
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#endif
 
 /* SDL Library */
 #ifndef SDL_MAIN_HANDLED
 #define SDL_MAIN_HANDLED
 #endif
 
-#ifndef SDL_
-#define SDL_
 #include <SDL.h>
-#endif
 
 /* Local Includes */
 #include "types.h"

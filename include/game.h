@@ -8,6 +8,10 @@
 #ifndef GAME_
 #define GAME_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*  
  * Update all object collisions
  *
@@ -76,4 +80,9 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image);
  *
  */
 void setup();
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

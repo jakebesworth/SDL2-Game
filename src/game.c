@@ -1,26 +1,19 @@
 /* Language Includes */
-#ifndef CSTD_
-#define CSTD_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#endif
 
-#ifndef CSYSTEM_
-#define CSYSTEM_
+/* Standard System Include */
 #include <unistd.h>
 #include <time.h>
+
 #ifndef F_OK
 #define F_OK 0
 #endif
-#endif
 
 /* SDL Library */
-#ifndef SDL_
-#define SDL_
 #include <SDL.h>
-#endif
 
 /* Local Includes */
 #include "types.h"
@@ -31,9 +24,11 @@
 
 void setup()
 {
+#ifdef ERROR_FILE
     /* Specifically to avoid return warnings and unused variable warnings */
     FILE * temp = freopen(ERROR_FILE, "a", stderr);
     (void)temp;
+#endif
 
     /* Initialize Random Seed */
     srand(time(NULL));

@@ -21,7 +21,7 @@ else
         DOWNLOAD := `downloading SDL2 framework library`
     else ifeq ($(UNAME_S), Linux)
         SDL_DEVELOPMENT_INC := /usr/include/SDL2
-        STD := -std=c99
+        STD := -std=c11
         OBJ := star
         LIBRARY := $(shell sdl2-config --libs)
         CFLAGS += $(shell sdl2-config --cflags)

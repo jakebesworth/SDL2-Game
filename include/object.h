@@ -8,6 +8,10 @@
 #ifndef OBJECT_
 #define OBJECT_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*  
  * Check object collisions
  *
@@ -134,4 +138,9 @@ void freeObjects(Object * obj);
  *
  */
 int countObjects(Object * obj);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

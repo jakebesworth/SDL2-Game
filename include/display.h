@@ -8,6 +8,10 @@
 #ifndef DISPLAY_
 #define DISPLAY_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*  
  * Display a string as a text object in the middle of the window
  *
@@ -33,4 +37,9 @@ void displayGameOver(SDL_Texture * font);
  *
  */
 void displayHUD(Object * ship, SDL_Texture * font);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

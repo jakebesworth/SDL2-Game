@@ -1,12 +1,16 @@
-# SDL2 Spaceship Game - in Development
+# SDL2 Game - in Development
 
 ## About
 
-- A simple, light multiplatform C, Make, SDL2 desktop game
+A simple, light weight, multiplatform, GNU C, Make, and SDL2 desktop game
 
 ## What is done so far?
 
-- The foundation, wrapper functions and basic game structure is done
+The foundation, wrapper functions and basic game structure is done
+
+## What needs to be done?
+
+Actual gameplay, music, sprites, more SDL2 wrapper functions
 
 ## Installing and Running the game
 

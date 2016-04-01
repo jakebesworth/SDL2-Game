@@ -1,18 +1,15 @@
-#ifndef CSTD_
-#define CSTD_
+/* Standard Include */
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#endif
 
-#ifndef CSYSTEM_
-#define CSYSTEM_
+/* Standard System Include */
 #include <unistd.h>
 #include <time.h>
+
 #ifndef F_OK
 #define F_OK 0
-#endif
 #endif
 
 char * getDate()

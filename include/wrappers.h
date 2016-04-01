@@ -8,6 +8,10 @@
 #ifndef WRAPPERS_
 #define WRAPPERS_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*  
  * Set the alpha layer onto a texture
  *
@@ -81,4 +85,9 @@ void delayFramesPerSecond(uint32_t timer);
  *
  */
 void updateWindow();
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

@@ -8,6 +8,10 @@
 #ifndef GLOBAL_
 #define GLOBAL_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* File Paths */
 #define IMG_DIR "assets/img/"
 #define FONT_DIR "assets/fonts/"
@@ -43,4 +47,9 @@ extern uint32_t score;
  *
  */
 char * getDate();
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
