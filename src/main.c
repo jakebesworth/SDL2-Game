@@ -76,9 +76,9 @@ int main(int argc, char * argv[])
     setup();
 
     /* Load Bitmaps */
-    spriteSheet = loadTextureBack(IMG_DIR "sprite-sheet.bmp", 0x0, 0x0, 0x0);
-    fontTiny = loadTextureBack(FONT_DIR "font-tiny.bmp", 0x0, 0x0, 0x0);
-    fontSmall = loadTextureBack(FONT_DIR "font-small.bmp", 0x0, 0x0, 0x0);
+    spriteSheet = loadTextureBack(getAbsolutePath(IMG_DIR "sprite-sheet.bmp"), 0x0, 0x0, 0x0);
+    fontTiny = loadTextureBack(getAbsolutePath(FONT_DIR "font-tiny.bmp"), 0x0, 0x0, 0x0);
+    fontSmall = loadTextureBack(getAbsolutePath(FONT_DIR "font-small.bmp"), 0x0, 0x0, 0x0);
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);

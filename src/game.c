@@ -25,11 +25,11 @@
 
 void setup()
 {
-#ifdef ERROR_FILE
     /* Specifically to avoid return warnings and unused variable warnings */
-    FILE * temp = freopen(ERROR_FILE, "a", stderr);
-    (void)temp;
-#endif
+    if(freopen(getAbsolutePath(ERROR_FILE), "a", stderr) == NULL)
+    {
+       fprintf(stderr, "[%s][%s: %d]Warning: Freopen could not pipe stream\n", getDate(), __FILE__, __LINE__);
+    }
 
     /* Initialize Random Seed */
     srand(time(NULL));

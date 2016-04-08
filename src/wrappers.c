@@ -40,6 +40,8 @@ int init(char * title)
         SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
     }
 
+    SDL_ShowCursor(SDL_DISABLE);
+
     /* Initialize Window */
     updateWindow();
 
@@ -52,7 +54,14 @@ SDL_Texture * loadTexture(char * image, SDL_Surface * surface)
 
     if(surface == NULL)
     {
-        if(image == NULL || strstr(image, "bmp") == NULL)
+        if(image == NULL)
+        {
+            fprintf(stderr, "[%s][%s: %d]Warning: image string NULL\n", getDate(), __FILE__, __LINE__);
+            return NULL;
+
+        }
+
+        if(strstr(image, "bmp") == NULL)
         {
             fprintf(stderr, "[%s][%s: %d]Warning: Images are not bitmap\n", getDate(), __FILE__, __LINE__);
             return NULL;
@@ -136,6 +145,32 @@ void delayFramesPerSecond(uint32_t timer)
     {
         SDL_Delay((1000 / FRAMES_PER_SECOND) - (SDL_GetTicks() - timer));
     }
+}
+
+char * getAbsolutePath(char * relativeString)
+{
+    static char absoluteString[BUFFER_SIZE] = {0};
+    char * basePathString = NULL;
+
+    if(relativeString == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: relative string NULL\n", getDate(), __FILE__, __LINE__);
+        return NULL;
+    }
+
+    basePathString = SDL_GetBasePath();
+
+    if(basePathString == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not get SDL Basepath String, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+        return NULL;
+    }
+
+    (void)strcpy(absoluteString, basePathString);
+    SDL_free(basePathString);
+    (void)strcat(absoluteString, relativeString);
+
+    return absoluteString;
 }
 
 void clearScreen()

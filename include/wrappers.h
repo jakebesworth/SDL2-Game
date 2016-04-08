@@ -13,6 +13,17 @@ extern "C"
 {
 #endif
 
+
+/*  
+ * Get the absolute path to a relative to directory root path
+ *
+ * @param relativeString    The relative path
+ *
+ * @return a pointer to function's static memory containing the absolute path of the given relative path
+ *
+ */
+char * getAbsolutePath(char * relativeString);
+
 /*  
  * Set the alpha layer onto a texture
  *
