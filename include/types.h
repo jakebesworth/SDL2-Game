@@ -37,6 +37,7 @@ typedef enum
 {
     DEFAULT,
     CUTSCENE,
+    MENU,
     WAVE,
     PAUSE,
     GAME_STATE_SIZE
@@ -48,7 +49,9 @@ typedef enum
  */
 typedef enum
 {
+    GLOBAL_TIMER,
     BULLET_TINY_TIMER,
+    DISPLAY_GAME_TIMER,
     TIMER_TYPE_SIZE
 } timerType;
 

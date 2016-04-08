@@ -13,14 +13,16 @@ extern "C"
 {
 #endif
 
+
 /*  
- * Display a string as a text object in the middle of the window
+ * Display text in middle of the screen
  *
- * @param font      The font-sheet to use
- * @param text      The string to convert to a text object
+ * @param font  Font to use
+ * @param text  Text to display
+ * @param type  Type of Font
  *
  */
-void displayTextMiddle(SDL_Texture * font, char * text);
+void displayTextMiddle(SDL_Texture * font, char * text, objectType type);
 
 /*  
  * Display the game over message
@@ -30,14 +32,16 @@ void displayTextMiddle(SDL_Texture * font, char * text);
  */
 void displayGameOver(SDL_Texture * font);
 
+
 /*  
- * Display the heads up display
+ * Display the user's heads up display
  *
- * @param ship      The ship Object (lives)
- * @param font      The font to use
+ * @param ship  The ship to get lives
+ * @param font  The font to use when printing HUD elements
+ * @param timer The game seconds timer of the user in the world
  *
  */
-void displayHUD(Object * ship, SDL_Texture * font);
+void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer);
 
 #ifdef __cplusplus
 }

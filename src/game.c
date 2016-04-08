@@ -21,6 +21,7 @@
 #include "object.h"
 #include "game.h"
 #include "global.h"
+#include "extern.h"
 
 void setup()
 {
@@ -37,9 +38,9 @@ void setup()
     keystates = SDL_GetKeyboardState(NULL);
 
     /* Constant Logic / initialize */
-    SCREEN_WIDTH = 720;
-    SCREEN_HEIGHT = 405;
-    SCREEN_TOP = (SCREEN_HEIGHT * 0.06);
+    SCREEN_WIDTH = 1920;
+    SCREEN_HEIGHT = 1080;
+    SCREEN_TOP = 64;
     SCREEN_BOTTOM = 40;
     SCREEN_LEFT = 5;
     SCREEN_RIGHT = 40;

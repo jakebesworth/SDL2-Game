@@ -2,7 +2,7 @@
 
 ## About
 
-A simple, light weight, multiplatform, GNU C, Make, and SDL2 desktop game
+A simple, lightweight, multi-platform, GNU C, Make, and SDL2 desktop game
 
 ## What is done so far?
 

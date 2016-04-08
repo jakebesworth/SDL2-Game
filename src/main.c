@@ -18,6 +18,7 @@
 #include "game.h"
 #include "global.h"
 #include "display.h"
+#include "extern.h"
 
 /* Environmental Dependancies */
 #ifdef linux
@@ -54,9 +55,9 @@ uint32_t score;
 int main(int argc, char * argv[])
 {
     /* Game Variables */
-    uint8_t exit       = 0;
-    uint32_t g_timer   = 0;
-    gameState g_state  = DEFAULT;
+    uint8_t exit = 0;
+    uint32_t gTimer[TIMER_TYPE_SIZE] = {0};
+    gameState gState = DEFAULT;
 
     /* SDL Variables */
     SDL_Texture * spriteSheet = NULL;
@@ -67,7 +68,6 @@ int main(int argc, char * argv[])
     /* User Variables */
     Object * ship = NULL;
     Object * bullets = NULL;
-    uint32_t userTimer[TIMER_TYPE_SIZE] = {0};
 
     /* NPC Variables */
     Object * asteroids = NULL;
@@ -83,12 +83,12 @@ int main(int argc, char * argv[])
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);
     positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
-    userTimer[BULLET_TINY_TIMER] = SDL_GetTicks();
+    gTimer[BULLET_TINY_TIMER] = SDL_GetTicks();
 
     while(!exit)
     {
         /* Global Timer */
-        g_timer = SDL_GetTicks();
+        gTimer[GLOBAL_TIMER] = SDL_GetTicks();
 
         /* Clear Screen */
         clearScreen();
@@ -106,7 +106,7 @@ int main(int argc, char * argv[])
                 switch(event.key.keysym.sym)
                 {
                     case SDLK_p:
-                        g_state = (g_state == DEFAULT ? PAUSE : DEFAULT);
+                        gState = (gState == DEFAULT ? PAUSE : DEFAULT);
                         break;
                     case SDLK_ESCAPE:
                         exit = 1;
@@ -119,7 +119,7 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();
 
         /* Default game state, player playing the game */
-        if(g_state == DEFAULT)
+        if(gState == DEFAULT)
         {
             if(ship->lives <= 0)
             {
@@ -127,18 +127,24 @@ int main(int argc, char * argv[])
                 continue;
             }
 
-            bullets = updateUserActions(ship, bullets, spriteSheet, userTimer);
+            bullets = updateUserActions(ship, bullets, spriteSheet, gTimer);
             asteroids = updateAsteroids(asteroids, spriteSheet);
             updateObjectCollision(&ship, &bullets, &asteroids);
-            displayHUD(ship, fontTiny);
+            gTimer[DISPLAY_GAME_TIMER] = SDL_GetTicks() / 1000;
+            displayHUD(ship, fontSmall, gTimer[DISPLAY_GAME_TIMER]);
         }
         /* Game Paused */
-        else if(g_state == PAUSE)
+        else if(gState == PAUSE)
         {
-            displayTextMiddle(fontSmall, "pause");
+            displayTextMiddle(fontSmall, "pause", FONT_SMALL);
         }
         /* Introduction to new waves */
-        else if(g_state == WAVE)
+        else if(gState == MENU)
+        {
+
+        }
+        /* Introduction to new waves */
+        else if(gState == WAVE)
         {
 
         }
@@ -147,7 +153,7 @@ int main(int argc, char * argv[])
         updateWindow();
 
         /* Frames Per Second Delay */
-        delayFramesPerSecond(g_timer);
+        delayFramesPerSecond(gTimer[GLOBAL_TIMER]);
     }
 
     /* Game Over */

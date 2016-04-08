@@ -71,6 +71,12 @@ Object * createTextObject(SDL_Texture * image, char * text, objectType type)
 
 int getTextX(char c)
 {
+    /* If capital letters, set to lowercase */
+    if(c >= 65 && c <= 90)
+    {
+        c += 0x20;
+    }
+
     /* Both getText functions work off of ASCII values mapping to spots on a 12x3 font-sheet */
     if(c <= 57)
     {
@@ -92,6 +98,11 @@ int getTextX(char c)
 
 int getTextY(char c)
 {
+    if(c >= 65 && c <= 90)
+    {
+        c += 0x20;
+    }
+
     if(c <= 57 || c >= 121)
     {
         return 2;
