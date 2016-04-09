@@ -13,8 +13,8 @@
 # Windows Dependant Variables
 ifeq ($(OS),Windows_NT)
     # SDL Development include file and directory
-    SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include\SDL2
-    SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib
+    SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include
+    SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib\lib\x86
 
     # GNU Compiler Standard
     STD := -std=c11
@@ -142,7 +142,7 @@ endif
 # Compile the distribution for the given system
 .PHONY: dist
 
-dist: all $(DIST_DIR) $(DIST_DEPENDENCIES) $(ASSETS_DIR)
+dist: $(DIST_DIR) $(DIST_DEPENDENCIES) $(ASSETS_DIR)
 	@echo Compiling distribution build in \"$(DIST_DIR)\" as \"$(DIST_NAME).tar.gz\"
 	mkdir $(DIST_DIR)$(DIST_NAME)
 	mkdir $(DIST_DIR)$(DIST_NAME)/$(LOGS_DIR)
