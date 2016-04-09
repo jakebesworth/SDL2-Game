@@ -33,18 +33,24 @@ void setup()
 
     /* Initialize Random Seed */
     srand(time(NULL));
+
+    /* Initialize Window */
+    if(!init("Star"))
+    {
+        exit(0);
+    }
     
     /* Initialize Keystates */
     keystates = SDL_GetKeyboardState(NULL);
 
     /* Constant Logic / initialize */
-    SCREEN_WIDTH = 1920;
-    SCREEN_HEIGHT = 1080;
+    SCREEN_WIDTH = getNativeWidth();
+    SCREEN_HEIGHT = getNativeHeight();
     SCREEN_TOP = 64;
     SCREEN_BOTTOM = 40;
     SCREEN_LEFT = 5;
     SCREEN_RIGHT = 40;
-    FRAMES_PER_SECOND = 60.0; /* Up to 144 */
+    FRAMES_PER_SECOND = 60.0;
     GAME_TICK_RATIO = (60.0 / FRAMES_PER_SECOND);
 
     SHIP_SPEED = (7.5 * GAME_TICK_RATIO);
@@ -53,12 +59,6 @@ void setup()
 
     /* Global Score */
     score = 0;
-
-    /* Initialize Window */
-    if(!init("Star"))
-    {
-        exit(0);
-    }
 }
 
 void updateObjectCollision(Object ** ship, Object ** bullets, Object ** asteroids)
