@@ -19,7 +19,7 @@ Build the software
 make
 ```
 
-Download precompiled build
+Or download precompiled build
 ```
 dist/SDL2-game-{my-system}.tar.gz
 tar -zxvf SDL2-game-{my-system}.tar.gz
