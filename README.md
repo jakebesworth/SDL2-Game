@@ -19,9 +19,21 @@ Build the software
 make
 ```
 
+Download precompiled build
+```
+dist/SDL2-game-{my-system}.tar.gz
+tar -zxvf SDL2-game-{my-system}.tar.gz
+```
+
 Run the game
 ```
 ./star
+```
+
+**Note that Linux needs to package install the SDL2 library such as:**
+
+```
+sudo apt-get install libsdl2-dev
 ```
 
 ## Game Controls
