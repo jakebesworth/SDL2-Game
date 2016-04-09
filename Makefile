@@ -149,6 +149,7 @@ dist: all $(DIST_DIR) $(DIST_DEPENDENCIES) $(ASSETS_DIR)
 	cp $(OBJ) $(DIST_DIR)$(DIST_NAME)
 	cp -r $(ASSETS_DIR) $(DIST_DIR)$(DIST_NAME)
 	cp -r $(DIST_DEPENDENCIES) $(DIST_DIR)$(DIST_NAME)
+	cp README* $(DIST_DIR)$(DIST_NAME)
 	tar -zcvf $(DIST_DIR)$(DIST_NAME).tar.gz -C $(DIST_DIR) --remove-files $(DIST_NAME)
 
 .PHONY: valgrind drmemory clean
