@@ -25,7 +25,9 @@ make
 Or download precompiled build
 
 [GNU/Linux](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-linux.tar.gz)
+
 [Windows](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-windows.tar.gz)
+
 [OS X](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-osx.tar.gz)
 
 Run the game
