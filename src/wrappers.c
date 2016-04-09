@@ -8,8 +8,8 @@
 #include <SDL.h>
 
 /* Local Includes */
-#include "wrappers.h"
 #include "extern.h"
+#include "wrappers.h"
 #include "global.h"
 
 int init(char * title)
@@ -20,7 +20,7 @@ int init(char * title)
        return 0;
     }
 
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP); /* SDL_WINDOW_SHOWN */
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, getNativeWidth(), getNativeHeight(), SDL_WINDOW_FULLSCREEN_DESKTOP); /* SDL_WINDOW_SHOWN */
 
     if(window == NULL)
     {
@@ -145,6 +145,24 @@ void delayFramesPerSecond(uint32_t timer)
     {
         SDL_Delay((1000 / FRAMES_PER_SECOND) - (SDL_GetTicks() - timer));
     }
+}
+
+int getNativeHeight()
+{
+    int height;
+
+    SDL_GetWindowSize(window, NULL, &height);
+
+    return height;
+}
+
+int getNativeWidth()
+{
+    int width;
+
+    SDL_GetWindowSize(window, &width, NULL);
+
+    return width;
 }
 
 char * getAbsolutePath(char * relativeString)

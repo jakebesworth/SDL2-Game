@@ -13,6 +13,21 @@ extern "C"
 {
 #endif
 
+/*  
+ * Get native resolution height
+ *
+ * @return native resolution height
+ *
+ */
+int getNativeHeight();
+
+/*  
+ * Get native resolution width
+ *
+ * @return native resolution width
+ *
+ */
+int getNativeWidth();
 
 /*  
  * Get the absolute path to a relative to directory root path
