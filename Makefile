@@ -27,6 +27,10 @@ ifeq ($(OS),Windows_NT)
 
     # Download Message
     DOWNLOAD := `downloading SDL2 development library`
+
+    # Distribution
+    DIST_NAME := SDL2-game-windows
+    DIST_DEPENDENCIES := SDL2.dll
 else
     #UNAME Shell Variable
     UNAME_S := $(shell uname -s)
@@ -49,6 +53,10 @@ else
         # Download Message
         DOWNLOAD := `downloading SDL2 framework library`
 
+        # Distribution
+        DIST_NAME := SDL2-game-osx
+        DIST_DEPENDENCIES := Library
+
     # GNU/Linux Depedant Variables
     else ifeq ($(UNAME_S), Linux)
         # SDL Development include file and directory
@@ -66,6 +74,10 @@ else
 
         # Download Message
         DOWNLOAD := `sudo apt-get install libsdl2-dev`
+
+        # Distribution
+        DIST_NAME := SDL2-game-linux
+        DIST_DEPENDENCIES := $(OBJ)
     endif
 endif
 
@@ -86,6 +98,11 @@ HEADER_DIR := include/
 # Depend Files
 DEPEND_DIR := depend/
 DEPEND_FILES := $(patsubst $(SRC_DIR)%.c,$(DEPEND_DIR)%.d,$(SOURCE_FILES))
+
+# Distribution related Directories
+ASSETS_DIR := assets/
+DIST_DIR := dist/
+LOGS_DIR := logs/
 
 # Compiler
 CC := gcc
@@ -121,6 +138,18 @@ ifeq ($(wildcard $(SDL_DEVELOPMENT_INC)),)
 endif
 
 -include $(DEPEND_FILES)
+
+# Compile the distribution for the given system
+.PHONY: dist
+
+dist: all $(DIST_DIR) $(DIST_DEPENDENCIES) $(ASSETS_DIR)
+	@echo Compiling distribution build in \"$(DIST_DIR)\" as \"$(DIST_NAME).tar.gz\"
+	mkdir $(DIST_DIR)$(DIST_NAME)
+	mkdir $(DIST_DIR)$(DIST_NAME)/$(LOGS_DIR)
+	cp $(OBJ) $(DIST_DIR)$(DIST_NAME)
+	cp -r $(ASSETS_DIR) $(DIST_DIR)$(DIST_NAME)
+	cp $(DIST_DEPENDENCIES) $(DIST_DIR)$(DIST_NAME)
+	tar -zcvf $(DIST_DIR)$(DIST_NAME).tar.gz -C $(DIST_DIR) --remove-files $(DIST_NAME)
 
 .PHONY: valgrind drmemory clean
 

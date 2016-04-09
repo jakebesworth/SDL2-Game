@@ -20,7 +20,7 @@ int init(char * title)
        return 0;
     }
 
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, getNativeWidth(), getNativeHeight(), SDL_WINDOW_FULLSCREEN_DESKTOP); /* SDL_WINDOW_SHOWN */
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
 
     if(window == NULL)
     {

@@ -109,7 +109,6 @@ FILE * openFile(char * filename, char * mode)
     if(fp == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Warning: File \"%s\" could not be opened\n", getDate(), __FILE__, __LINE__, filename);
-        return NULL;
     }
 
     return fp;
