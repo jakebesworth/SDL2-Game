@@ -14,7 +14,7 @@
 ifeq ($(OS),Windows_NT)
     # SDL Development include file and directory
     SDL_DEVELOPMENT_INC := C:\MinGW\SDL2\include
-    SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib\lib\x86
+    SDL_DEVELOPMENT_DIR := C:\MinGW\SDL2\lib\x86
 
     # GNU Compiler Standard
     STD := -std=c11
