@@ -51,6 +51,10 @@ Object * createTextObject(SDL_Texture * image, char * text, objectType type)
     {
         width = height = 32;
     }
+    else if(type == FONT_LARGE)
+    {
+        width = height = 64;
+    }
 
     for(i = 0; i < textLength; i++)
     {
@@ -71,50 +75,74 @@ Object * createTextObject(SDL_Texture * image, char * text, objectType type)
 
 int getTextX(char c)
 {
-    /* If capital letters, set to lowercase */
-    if(c >= 65 && c <= 90)
+    if(c <= 43)
     {
-        c += 0x20;
+        return (c - 32);
     }
-
-    /* Both getText functions work off of ASCII values mapping to spots on a 12x3 font-sheet */
-    if(c <= 57)
+    else if(c <= 55)
     {
-        return (c - 46);
-    }
-    else if(c <= 108)
-    {
-        return (c - 97);
+        return (c - 44);
     } 
-    else if(c <= 120)
+    else if(c <= 67)
     {
-        return (c - 109);
+        return (c - 56);
+    }
+    else if(c <= 79)
+    {
+        return (c - 68);
+    }
+    else if(c <= 91)
+    {
+        return (c - 80);
+    }
+    else if(c <= 103)
+    {
+        return (c - 92);
+    }
+    else if(c <= 115)
+    {
+        return (c - 104);
     }
     else
     {
-        return (c - 121);
+        return (c - 116);
     }
 }
 
 int getTextY(char c)
 {
-    if(c >= 65 && c <= 90)
+    if(c <= 43)
     {
-        c += 0x20;
+        return 0;
     }
-
-    if(c <= 57 || c >= 121)
+    else if(c <= 55)
+    {
+        return 1;
+    } 
+    else if(c <= 67)
     {
         return 2;
     }
-    else if(c >= 109)
+    else if(c <= 79)
     {
-        return 1;
+        return 3;
+    }
+    else if(c <= 91)
+    {
+        return 4;
+    }
+    else if(c <= 103)
+    {
+        return 5;
+    }
+    else if(c <= 115)
+    {
+        return 6;
     }
     else
     {
-        return 0;
-    } 
+        return 7;
+    }
 }
 
 void moveTextObject(Object * obj, int x, int y)
@@ -126,7 +154,7 @@ void moveTextObject(Object * obj, int x, int y)
     {
         clip = obj->clip;
 
-        obj->x += (x + ((obj->clip.w * 0.75) * i++));
+        obj->x += (x + ((obj->clip.w * 0.5) * i++));
         obj->y += y;
         clip.x += clip.w * obj->subImage;
         applyTexture(obj->x, obj->y, obj->image, &clip);
@@ -143,7 +171,7 @@ void positionTextObject(Object * obj, int x, int y)
     {
         clip = obj->clip;
 
-        obj->x = (x + ((obj->clip.w * 0.75) * i++));
+        obj->x = (x + ((obj->clip.w * 0.5) * i++));
         obj->y = y;
         clip.x += clip.w * obj->subImage;
         applyTexture(obj->x, obj->y, obj->image, &clip);

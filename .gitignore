@@ -1,5 +1,4 @@
 .DS_STORE
-*.xcf
 *.o
 *.d
 *.exe

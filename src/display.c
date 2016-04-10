@@ -18,7 +18,7 @@
 void displayGameOver(SDL_Texture * font)
 {
     clearScreen();
-    displayTextMiddle(font, "game over", FONT_SMALL);
+    displayTextMiddle(font, "Game Over", FONT_LARGE);
     updateWindow();
     SDL_Delay(2 * 1000);
 }
@@ -47,8 +47,8 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     SDL_RenderFillRect(renderer, &bar);
 
     /* Display score text */
-    strncpy(buffer, "score", BUFFER_SIZE);
-    temp = createTextObject(font, buffer, FONT_SMALL);
+    strncpy(buffer, "Score", BUFFER_SIZE);
+    temp = createTextObject(font, buffer, FONT_LARGE);
 
     positionTextObject(temp, 0, 0);
 
@@ -56,14 +56,14 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     previous = (temp->x + (countObjects(temp) * temp->clip.w));
     freeObjects(temp);
     snprintf(buffer, BUFFER_SIZE, "%d", score);
-    temp = createTextObject(font, buffer, FONT_SMALL);
+    temp = createTextObject(font, buffer, FONT_LARGE);
 
     positionTextObject(temp, previous, 0);
     freeObjects(temp);
 
     /* Display lives text */
-    strncpy(buffer, "lives", BUFFER_SIZE);
-    temp = createTextObject(font, buffer, FONT_SMALL);
+    strncpy(buffer, "Lives", BUFFER_SIZE);
+    temp = createTextObject(font, buffer, FONT_LARGE);
 
     positionTextObject(temp, ((SCREEN_WIDTH / 4)), 0);
 
@@ -71,14 +71,14 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     previous = (temp->x + (countObjects(temp) * temp->clip.w));
     freeObjects(temp);
     snprintf(buffer, BUFFER_SIZE, "%d", ship->lives);
-    temp = createTextObject(font, buffer, FONT_SMALL);
+    temp = createTextObject(font, buffer, FONT_LARGE);
 
     positionTextObject(temp, previous, 0);    
     freeObjects(temp);
 
     /* Display Timer */
     snprintf(buffer, BUFFER_SIZE, "%d", timer);
-    temp = createTextObject(font, buffer, FONT_SMALL);
+    temp = createTextObject(font, buffer, FONT_LARGE);
 
     positionTextObject(temp, ((SCREEN_WIDTH - (countObjects(temp) * temp->clip.w))), 0);
     freeObjects(temp);

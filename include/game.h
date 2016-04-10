@@ -13,6 +13,8 @@ extern "C"
 {
 #endif
 
+void end();
+
 /*  
  * Update all object collisions
  *

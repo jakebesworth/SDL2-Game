@@ -23,6 +23,13 @@
 #include "global.h"
 #include "extern.h"
 
+void end()
+{
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
 void setup()
 {
     /* Specifically to avoid return warnings and unused variable warnings */

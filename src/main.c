@@ -61,8 +61,7 @@ int main(int argc, char * argv[])
 
     /* SDL Variables */
     SDL_Texture * spriteSheet = NULL;
-    SDL_Texture * fontTiny = NULL;
-    SDL_Texture * fontSmall = NULL;
+    SDL_Texture * fontLarge = NULL;
     SDL_Event event;
 
     /* User Variables */
@@ -77,8 +76,7 @@ int main(int argc, char * argv[])
 
     /* Load Bitmaps */
     spriteSheet = loadTextureBack(getAbsolutePath(IMG_DIR "sprite-sheet.bmp"), 0x0, 0x0, 0x0);
-    fontTiny = loadTextureBack(getAbsolutePath(FONT_DIR "font-tiny.bmp"), 0x0, 0x0, 0x0);
-    fontSmall = loadTextureBack(getAbsolutePath(FONT_DIR "font-small.bmp"), 0x0, 0x0, 0x0);
+    fontLarge = loadTextureBack(getAbsolutePath(FONT_DIR "fontx64.bmp"), 0x0, 0x0, 0x0);
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);
@@ -131,12 +129,12 @@ int main(int argc, char * argv[])
             asteroids = updateAsteroids(asteroids, spriteSheet);
             updateObjectCollision(&ship, &bullets, &asteroids);
             gTimer[DISPLAY_GAME_TIMER] = SDL_GetTicks() / 1000;
-            displayHUD(ship, fontSmall, gTimer[DISPLAY_GAME_TIMER]);
+            displayHUD(ship, fontLarge, gTimer[DISPLAY_GAME_TIMER]);
         }
         /* Game Paused */
         else if(gState == PAUSE)
         {
-            displayTextMiddle(fontSmall, "pause", FONT_SMALL);
+            displayTextMiddle(fontLarge, "Pause", FONT_LARGE);
         }
         /* Introduction to new waves */
         else if(gState == MENU)
@@ -159,19 +157,17 @@ int main(int argc, char * argv[])
     /* Game Over */
     if(ship->lives <= 0)
     {
-        displayGameOver(fontSmall);
+        displayGameOver(fontLarge);
     }
 
-    /* Clean Up - think of a better way to do this*/
+    /* Clean Up - TODO better way to handle these objects in main*/
     SDL_DestroyTexture(spriteSheet);
-    SDL_DestroyTexture(fontSmall);
-    SDL_DestroyTexture(fontTiny);
+    SDL_DestroyTexture(fontLarge);
     freeObjects(ship);
     freeObjects(asteroids);
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    /* Close SDL framework */
+    end();
 
     return 0;
 }
