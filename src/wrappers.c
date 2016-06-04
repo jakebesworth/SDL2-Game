@@ -35,6 +35,9 @@ int initSDL(char * title)
     /* Use flag SDL_RENDERER_SOFTWARE for legacy machines */
     Global->renderer = SDL_CreateRenderer(Global->window, -1, SDL_RENDERER_ACCELERATED);
 
+    /* 0 nearest (default), 1 linear (OpenGL, Direct3D), 2 anisotropic filtering (Direct3D) */
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+
     if(Global->renderer == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL Renderer error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
@@ -192,4 +195,15 @@ void clearScreen()
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen renderer, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
     }
+}
+
+void setWindowSize(int width, int height)
+{
+    if(width <= 0 || height <= 0)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: set window size height or width is < 0\n", getDate(), __FILE__, __LINE__);
+        return;
+    }
+
+    SDL_SetWindowSize(Global->window, width, height);
 }

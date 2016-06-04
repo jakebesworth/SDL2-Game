@@ -14,6 +14,16 @@ extern "C"
 #endif
 
 /*  
+ * Set window height and width
+ * Note: The window size in screen coordinates may different from in pixels
+ *
+ * @param width     The width in pixels to set
+ * @param height    The height in pixels to set
+ *
+ */
+void setWindowSize(int width, int height);
+
+/*  
  * Get native resolution height
  *
  * @return native resolution height
