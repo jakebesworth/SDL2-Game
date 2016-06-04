@@ -27,7 +27,7 @@ void displayTextMiddle(SDL_Texture * font, char * text, objectType type)
 {
     Object * temp = createTextObject(font, text, type);
 
-    positionTextObject(temp, (SCREEN_WIDTH - (strlen(text) * temp->clip.w)) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16) / 2);
+    positionTextObject(temp, (Global->screenWidth - Global->screenRight + Global->screenLeft - ((strlen(text) * temp->clip.w) / 2)) / 2, (Global->screenHeight - Global->screenBottom + Global->screenTop - (temp->clip.h / 2)) / 2);
     freeObjects(temp);
 }
             
@@ -41,10 +41,10 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     /* Set the HUD bar */
     bar.x = 0;
     bar.y = 0;
-    bar.w = SCREEN_WIDTH;
-    bar.h = SCREEN_TOP;
+    bar.w = Global->screenWidth;
+    bar.h = Global->screenTop;
 
-    SDL_RenderFillRect(renderer, &bar);
+    SDL_RenderFillRect(Global->renderer, &bar);
 
     /* Display score text */
     strncpy(buffer, "Score", BUFFER_SIZE);
@@ -65,7 +65,7 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     strncpy(buffer, "Lives", BUFFER_SIZE);
     temp = createTextObject(font, buffer, FONT_LARGE);
 
-    positionTextObject(temp, ((SCREEN_WIDTH / 4)), 0);
+    positionTextObject(temp, ((Global->screenWidth / 4)), 0);
 
     /* Display lives number */
     previous = (temp->x + (countObjects(temp) * temp->clip.w));
@@ -80,6 +80,6 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     snprintf(buffer, BUFFER_SIZE, "%d", timer);
     temp = createTextObject(font, buffer, FONT_LARGE);
 
-    positionTextObject(temp, ((SCREEN_WIDTH - (countObjects(temp) * temp->clip.w))), 0);
+    positionTextObject(temp, ((Global->screenWidth - (countObjects(temp) * temp->clip.w))), 0);
     freeObjects(temp);
 }

@@ -128,7 +128,6 @@ $(OBJ): $(OBJECT_FILES)
 	$(CC) $(DEBUG) $(STD) $(OPT) $(OBJECT_FILES) -o $(OBJ) $(LIBRARY)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@echo compiling object files \'$(OBJECT_FILES)\'
 	$(CC) -c $< $(CFLAGS) $(STD) $(OPT) $(INCLUDE) $(DFLAGS) $(patsubst $(OBJ_DIR)%.o,$(DEPEND_DIR)%.d,$@) -o $@
 
 # SDL Library Check

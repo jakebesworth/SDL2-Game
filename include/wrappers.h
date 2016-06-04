@@ -91,7 +91,7 @@ void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip);
  * @return 1 on success 0 on failure 
  *
  */
-int init(char * title);
+int initSDL(char * title);
 
 /*  
  * Clear the renderer to the last set colour

@@ -32,33 +32,17 @@
 #define sleep(x) Sleep(x*1000)
 #endif
 
-/* Define Global Variables */
-uint16_t SCREEN_WIDTH;
-uint16_t SCREEN_HEIGHT;
-float SCREEN_TOP;
-float SCREEN_BOTTOM;
-float SCREEN_LEFT;
-float SCREEN_RIGHT;
-float FRAMES_PER_SECOND;
-float GAME_TICK_RATIO;
+GlobalSDL * Global;
 
+/* Define Global Variables */
 float SHIP_SPEED;
 float ASTEROID_SPEED;
 float BULLET_TINY_SPEED;
 
-/* Global SDL Variables */
-SDL_Window * window;
-SDL_Renderer * renderer;
-const uint8_t * keystates;
 uint32_t score; 
 
 int main(int argc, char * argv[])
 {
-    /* Game Variables */
-    uint8_t exit = 0;
-    uint32_t gTimer[TIMER_TYPE_SIZE] = {0};
-    gameState gState = DEFAULT;
-
     /* SDL Variables */
     SDL_Texture * spriteSheet = NULL;
     SDL_Texture * fontLarge = NULL;
@@ -72,7 +56,7 @@ int main(int argc, char * argv[])
     Object * asteroids = NULL;
 
     /* Setup Pre-Game Logic and Constants */
-    setup();
+    startSDL();
 
     /* Load Bitmaps */
     spriteSheet = loadTextureBack(getAbsolutePath(IMG_DIR "sprite-sheet.bmp"), 0x0, 0x0, 0x0);
@@ -80,13 +64,13 @@ int main(int argc, char * argv[])
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);
-    positionObject(ship, (SCREEN_WIDTH - SCREEN_RIGHT - 16) / 2, (SCREEN_HEIGHT - SCREEN_BOTTOM - 16));
-    gTimer[BULLET_TINY_TIMER] = SDL_GetTicks();
+    positionObject(ship, (Global->screenWidth - Global->screenRight - 16) / 2, (Global->screenHeight - Global->screenBottom - 16));
+    Global->timer[BULLET_TINY_TIMER] = SDL_GetTicks();
 
-    while(!exit)
+    while(!Global->exit)
     {
         /* Global Timer */
-        gTimer[GLOBAL_TIMER] = SDL_GetTicks();
+        Global->timer[GLOBAL_TIMER] = SDL_GetTicks();
 
         /* Clear Screen */
         clearScreen();
@@ -96,7 +80,7 @@ int main(int argc, char * argv[])
         {
             if(event.type == SDL_QUIT)
             {
-                exit = 1;
+                Global->exit = 1;
                 break;
             }
             else if(event.type == SDL_KEYDOWN)
@@ -104,10 +88,10 @@ int main(int argc, char * argv[])
                 switch(event.key.keysym.sym)
                 {
                     case SDLK_p:
-                        gState = (gState == DEFAULT ? PAUSE : DEFAULT);
+                        Global->state = (Global->state == DEFAULT ? PAUSE : DEFAULT);
                         break;
                     case SDLK_ESCAPE:
-                        exit = 1;
+                        Global->exit = 1;
                         break;
                 }
             }
@@ -117,32 +101,32 @@ int main(int argc, char * argv[])
         SDL_PumpEvents();
 
         /* Default game state, player playing the game */
-        if(gState == DEFAULT)
+        if(Global->state == DEFAULT)
         {
             if(ship->lives <= 0)
             {
-                exit = 1;
+                Global->exit = 1;
                 continue;
             }
 
-            bullets = updateUserActions(ship, bullets, spriteSheet, gTimer);
+            bullets = updateUserActions(ship, bullets, spriteSheet, Global->timer);
             asteroids = updateAsteroids(asteroids, spriteSheet);
             updateObjectCollision(&ship, &bullets, &asteroids);
-            gTimer[DISPLAY_GAME_TIMER] = SDL_GetTicks() / 1000;
-            displayHUD(ship, fontLarge, gTimer[DISPLAY_GAME_TIMER]);
+            Global->timer[DISPLAY_GAME_TIMER] = SDL_GetTicks() / 1000;
+            displayHUD(ship, fontLarge, Global->timer[DISPLAY_GAME_TIMER]);
         }
         /* Game Paused */
-        else if(gState == PAUSE)
+        else if(Global->state == PAUSE)
         {
             displayTextMiddle(fontLarge, "Pause", FONT_LARGE);
         }
         /* Introduction to new waves */
-        else if(gState == MENU)
+        else if(Global->state == MENU)
         {
 
         }
         /* Introduction to new waves */
-        else if(gState == WAVE)
+        else if(Global->state == WAVE)
         {
 
         }
@@ -151,7 +135,7 @@ int main(int argc, char * argv[])
         updateWindow();
 
         /* Frames Per Second Delay */
-        delayFramesPerSecond(gTimer[GLOBAL_TIMER]);
+        delayFramesPerSecond(Global->timer[GLOBAL_TIMER]);
     }
 
     /* Game Over */
@@ -167,7 +151,7 @@ int main(int argc, char * argv[])
     freeObjects(asteroids);
 
     /* Close SDL framework */
-    end();
+    endSDL();
 
     return 0;
 }

@@ -12,7 +12,7 @@
 #include "wrappers.h"
 #include "global.h"
 
-int init(char * title)
+int initSDL(char * title)
 {
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -20,24 +20,29 @@ int init(char * title)
        return 0;
     }
 
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    /* Antialiasing buffer, OpenGL */
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
-    if(window == NULL)
+    Global->window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+    if(Global->window == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL window error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
         return 0;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    /* Use flag SDL_RENDERER_SOFTWARE for legacy machines */
+    Global->renderer = SDL_CreateRenderer(Global->window, -1, SDL_RENDERER_ACCELERATED);
 
-    if(renderer == NULL)
+    if(Global->renderer == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL Renderer error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
         return 0;
     }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 0x0, 0x0, 0x0, 0xFF);
+        SDL_SetRenderDrawColor(Global->renderer, 0x0, 0x0, 0x0, 0xFF);
     }
 
     SDL_ShowCursor(SDL_DISABLE);
@@ -76,7 +81,7 @@ SDL_Texture * loadTexture(char * image, SDL_Surface * surface)
         }
     }
 
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    texture = SDL_CreateTextureFromSurface(Global->renderer, surface);
 
     if(texture == NULL)
     {
@@ -120,7 +125,7 @@ void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip)
     offset.x = x;
     offset.y = y;
 
-    if(SDL_RenderCopy(renderer, source, clip, &offset))
+    if(SDL_RenderCopy(Global->renderer, source, clip, &offset))
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Could not render copy, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
     }
@@ -136,14 +141,14 @@ void setTextureAlpha(SDL_Texture * texture, uint8_t alpha)
 
 void updateWindow()
 {
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(Global->renderer);
 }
 
 void delayFramesPerSecond(uint32_t timer)
 {
-    if((SDL_GetTicks() - timer) < (1000 / FRAMES_PER_SECOND))
+    if((SDL_GetTicks() - timer) < (1000 / Global->framesPerSecond))
     {
-        SDL_Delay((1000 / FRAMES_PER_SECOND) - (SDL_GetTicks() - timer));
+        SDL_Delay((1000 / Global->framesPerSecond) - (SDL_GetTicks() - timer));
     }
 }
 
@@ -151,7 +156,7 @@ int getNativeHeight()
 {
     int height;
 
-    SDL_GetWindowSize(window, NULL, &height);
+    SDL_GetWindowSize(Global->window, NULL, &height);
 
     return height;
 }
@@ -160,7 +165,7 @@ int getNativeWidth()
 {
     int width;
 
-    SDL_GetWindowSize(window, &width, NULL);
+    SDL_GetWindowSize(Global->window, &width, NULL);
 
     return width;
 }
@@ -168,7 +173,6 @@ int getNativeWidth()
 char * getAbsolutePath(char * relativeString)
 {
     static char absoluteString[BUFFER_SIZE] = {0};
-    char * basePathString = NULL;
 
     if(relativeString == NULL)
     {
@@ -176,16 +180,7 @@ char * getAbsolutePath(char * relativeString)
         return NULL;
     }
 
-    basePathString = SDL_GetBasePath();
-
-    if(basePathString == NULL)
-    {
-        fprintf(stderr, "[%s][%s: %d]Warning: Could not get SDL Basepath String, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
-        return NULL;
-    }
-
-    (void)strcpy(absoluteString, basePathString);
-    SDL_free(basePathString);
+    (void)strcpy(absoluteString, Global->basePath);
     (void)strcat(absoluteString, relativeString);
 
     return absoluteString;
@@ -193,7 +188,7 @@ char * getAbsolutePath(char * relativeString)
 
 void clearScreen()
 {
-    if(SDL_RenderClear(renderer))
+    if(SDL_RenderClear(Global->renderer))
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Could not clear screen renderer, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
     }

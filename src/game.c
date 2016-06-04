@@ -23,16 +23,36 @@
 #include "global.h"
 #include "extern.h"
 
-void end()
+void endSDL()
 {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+
+    SDL_free(Global->basePath);
+    SDL_DestroyRenderer(Global->renderer);
+    SDL_DestroyWindow(Global->window);
+
+    free(Global);
     SDL_Quit();
 }
 
-void setup()
+void startSDL()
 {
-    /* Specifically to avoid return warnings and unused variable warnings */
+    /* Global game object */
+    Global = calloc(1, sizeof(GlobalSDL));
+
+    if(Global == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Fatal Error: Memory c-allocation error\n", getDate(), __FILE__, __LINE__);
+        exit(0);
+    }
+
+    Global->basePath = SDL_GetBasePath();
+
+    if(Global->basePath == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Fatal Error: Could not get SDL Basepath String, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+        exit(0);
+    }
+
     if(freopen(getAbsolutePath(ERROR_FILE), "a", stderr) == NULL)
     {
        fprintf(stderr, "[%s][%s: %d]Warning: Freopen could not pipe stream\n", getDate(), __FILE__, __LINE__);
@@ -41,28 +61,35 @@ void setup()
     /* Initialize Random Seed */
     srand(time(NULL));
 
+    Global->window = NULL;
+    Global->renderer = NULL;
+
     /* Initialize Window */
-    if(!init("Star"))
+    if(!initSDL("Naquadah Asteroids"))
     {
         exit(0);
     }
-    
-    /* Initialize Keystates */
-    keystates = SDL_GetKeyboardState(NULL);
 
     /* Constant Logic / initialize */
-    SCREEN_WIDTH = getNativeWidth();
-    SCREEN_HEIGHT = getNativeHeight();
-    SCREEN_TOP = 64;
-    SCREEN_BOTTOM = 40;
-    SCREEN_LEFT = 5;
-    SCREEN_RIGHT = 40;
-    FRAMES_PER_SECOND = 60.0;
-    GAME_TICK_RATIO = (60.0 / FRAMES_PER_SECOND);
+    Global->screenWidth = getNativeWidth();
+    Global->screenHeight = getNativeHeight();
+    Global->screenTop = 64;
+    Global->screenBottom = 40;
+    Global->screenLeft = 5;
+    Global->screenRight = 40;
+    /* Make this an option */
+    Global->framesPerSecond = 60.0;
+    Global->gameTickRatio = (60.0 / Global->framesPerSecond);
 
-    SHIP_SPEED = (7.5 * GAME_TICK_RATIO);
-    ASTEROID_SPEED = (1.5 * GAME_TICK_RATIO);
-    BULLET_TINY_SPEED = (9.0 * GAME_TICK_RATIO);
+    /* Initialize Keystates */
+    Global->keystates = SDL_GetKeyboardState(NULL);
+
+    Global->exit = 0;
+    Global->state = DEFAULT;
+
+    SHIP_SPEED = (7.5 * Global->gameTickRatio);
+    ASTEROID_SPEED = (1.5 * Global->gameTickRatio);
+    BULLET_TINY_SPEED = (9.0 * Global->gameTickRatio);
 
     /* Global Score */
     score = 0;
@@ -146,7 +173,7 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
             asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 6, 96, 32, 96, 96);
         }
 
-        asteroid->x = (int) ((rand() % (SCREEN_WIDTH)) - (asteroid->clip.w / 2));
+        asteroid->x = (int) ((rand() % (Global->screenWidth)) - (asteroid->clip.w / 2));
         asteroid->y = -(asteroid->clip.h);
 
         asteroid->next = asteroids;
@@ -157,7 +184,7 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
 
     while(asteroids != NULL)
     {
-        if(asteroids->y > (SCREEN_HEIGHT + asteroids->clip.h) || asteroids->lives <= 0)
+        if(asteroids->y > (Global->screenHeight + asteroids->clip.h) || asteroids->lives <= 0)
         {
             asteroid = asteroids;
             asteroids = asteroids->next;
@@ -199,7 +226,7 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image,
 
     if(timer[BULLET_TINY_TIMER] < SDL_GetTicks())
     {
-        if(keystates[SDL_SCANCODE_1] || keystates[SDL_SCANCODE_SPACE])
+        if(Global->keystates[SDL_SCANCODE_1] || Global->keystates[SDL_SCANCODE_SPACE])
         {
             bullet = createObject(image, 0, 2, BULLET_TINY, 1, 0, 144, 16, 16);
 
@@ -217,7 +244,7 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image,
 
     while(bullets != NULL)
     {
-        if(bullets->y <= SCREEN_TOP || bullets->lives <= 0)
+        if(bullets->y <= Global->screenTop || bullets->lives <= 0)
         {
             bullet = bullets;
             bullets = bullets->next;
@@ -256,22 +283,22 @@ void updateUserShipMovement(Object * ship)
     int8_t shipY = 0;
 
     /* User Keyboard  */
-    if(keystates[SDL_SCANCODE_LEFT] || keystates[SDL_SCANCODE_A])
+    if(Global->keystates[SDL_SCANCODE_LEFT] || Global->keystates[SDL_SCANCODE_A])
     {
         shipX--;
     }
 
-    if(keystates[SDL_SCANCODE_RIGHT] || keystates[SDL_SCANCODE_D])
+    if(Global->keystates[SDL_SCANCODE_RIGHT] || Global->keystates[SDL_SCANCODE_D])
     {
         shipX++;
     }
 
-    if(keystates[SDL_SCANCODE_UP] || keystates[SDL_SCANCODE_W])
+    if(Global->keystates[SDL_SCANCODE_UP] || Global->keystates[SDL_SCANCODE_W])
     {
         shipY--;
     }
 
-    if(keystates[SDL_SCANCODE_DOWN] || keystates[SDL_SCANCODE_S])
+    if(Global->keystates[SDL_SCANCODE_DOWN] || Global->keystates[SDL_SCANCODE_S])
     {
         shipY++;
     }
@@ -291,22 +318,22 @@ void updateUserShipMovement(Object * ship)
     }
 
     /* Setting Ship Boundaries */
-    if((ship->x + (shipX * SHIP_SPEED)) < (0 + SCREEN_LEFT))
+    if((ship->x + (shipX * SHIP_SPEED)) < (0 + Global->screenLeft))
     {
         shipX = 0;
     }
 
-    if((ship->x + (shipX * SHIP_SPEED)) > (SCREEN_WIDTH - SCREEN_RIGHT))
+    if((ship->x + (shipX * SHIP_SPEED)) > (Global->screenWidth - Global->screenRight))
     {
         shipX = 0;
     }
 
-    if((ship->y + (shipY * SHIP_SPEED)) < (0 + SCREEN_TOP))
+    if((ship->y + (shipY * SHIP_SPEED)) < (0 + Global->screenTop))
     {
         shipY = 0;
     }
 
-    if((ship->y + (shipY * SHIP_SPEED)) > (SCREEN_HEIGHT - SCREEN_BOTTOM))
+    if((ship->y + (shipY * SHIP_SPEED)) > (Global->screenHeight - Global->screenBottom))
     {
         shipY = 0;
     }

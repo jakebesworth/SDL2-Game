@@ -28,7 +28,7 @@ Or download precompiled build
 
 [Windows](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-windows.tar.gz)
 
-[OS X](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-osx.tar.gz)
+OS X - Will compile latest when I have access to OSX in the fall[](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-osx.tar.gz)
 
 Run the game
 ```

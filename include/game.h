@@ -13,7 +13,7 @@ extern "C"
 {
 #endif
 
-void end();
+void endSDL();
 
 /*  
  * Update all object collisions
@@ -82,7 +82,7 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image);
  * Game setup function, setup game settings and constants and initialize SDL2
  *
  */
-void setup();
+void startSDL();
 
 #ifdef __cplusplus
 }
