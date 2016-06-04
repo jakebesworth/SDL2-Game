@@ -45,7 +45,7 @@ int initSDL(char * title)
     }
     else
     {
-        SDL_SetRenderDrawColor(Global->renderer, 0x0, 0x0, 0x0, 0xFF);
+        setWindowColor(0x0, 0x0, 0x0, 0xFF);
     }
 
     SDL_ShowCursor(SDL_DISABLE);
@@ -54,6 +54,28 @@ int initSDL(char * title)
     updateWindow();
 
     return 1;
+}
+
+void setWindowIcon(char * image)
+{
+    SDL_Surface * icon = NULL;
+
+    icon = SDL_LoadBMP(image);
+
+    if(icon == NULL)
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not load image %s into surface, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+        return;
+    }
+
+    if(SDL_SetColorKey(icon, SDL_TRUE, SDL_MapRGB(icon->format, 0x0, 0x0, 0x0)))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not set color key for image %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+        return;
+    }
+
+    SDL_SetWindowIcon(Global->window, icon);
+    SDL_FreeSurface(icon);
 }
 
 SDL_Texture * loadTexture(char * image, SDL_Surface * surface)
@@ -109,7 +131,11 @@ SDL_Texture * loadTextureBack(char * image, uint8_t colourR, uint8_t colourG, ui
         return NULL;
     }
 
-    SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, colourR, colourG, colourB));
+    if(SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, colourR, colourG, colourB)))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not set color key for image %s, error: %s\n", getDate(), __FILE__, __LINE__, image, SDL_GetError());
+        return NULL;
+    }
 
     texture = loadTexture(image, surface);
 
@@ -119,6 +145,14 @@ SDL_Texture * loadTextureBack(char * image, uint8_t colourR, uint8_t colourG, ui
     }
 
     return texture;
+}
+
+void setWindowColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+    if(SDL_SetRenderDrawColor(Global->renderer, r, g, b, a))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not set renderer color, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
 }
 
 void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip)

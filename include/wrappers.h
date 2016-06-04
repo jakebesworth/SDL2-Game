@@ -14,6 +14,26 @@ extern "C"
 #endif
 
 /*  
+ * Sets the window icon in the tray
+ * Note: background transparency color is RGB(0,0,0)
+ *
+ * @param image     The image path to load
+ *
+ */
+void setWindowIcon(char * image);
+
+/*  
+ * Set the global renderer color
+ *
+ * @param r     R color
+ * @param g     G color
+ * @param b     B color
+ * @param a     Alpha value
+ *
+ */
+void setWindowColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+/*  
  * Set window height and width
  * Note: The window size in screen coordinates may different from in pixels
  *

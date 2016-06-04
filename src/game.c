@@ -70,6 +70,8 @@ void startSDL()
         exit(0);
     }
 
+    setWindowIcon(getAbsolutePath(IMG_DIR "icon.bmp"));
+
     /* Constant Logic / initialize */
     Global->screenWidth = getNativeWidth();
     Global->screenHeight = getNativeHeight();

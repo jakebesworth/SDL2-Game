@@ -44,7 +44,9 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     bar.w = Global->screenWidth;
     bar.h = Global->screenTop;
 
+    setWindowColor(0, 51, 102, 0xFF);
     SDL_RenderFillRect(Global->renderer, &bar);
+    setWindowColor(0x0, 0x0, 0x0, 0xFF);
 
     /* Display score text */
     strncpy(buffer, "Score", BUFFER_SIZE);
