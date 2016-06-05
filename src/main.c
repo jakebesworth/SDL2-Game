@@ -32,9 +32,9 @@
 #define sleep(x) Sleep(x*1000)
 #endif
 
+/* Define Global Variables */
 GlobalSDL * Global;
 
-/* Define Global Variables */
 float SHIP_SPEED;
 float ASTEROID_SPEED;
 float BULLET_TINY_SPEED;
