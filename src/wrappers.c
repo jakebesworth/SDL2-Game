@@ -35,9 +35,6 @@ int initSDL(char * title)
     /* Use flag SDL_RENDERER_SOFTWARE for legacy machines */
     Global->renderer = SDL_CreateRenderer(Global->window, -1, SDL_RENDERER_ACCELERATED);
 
-    /* 0 nearest (default), 1 linear (OpenGL, Direct3D), 2 anisotropic filtering (Direct3D) */
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-
     if(Global->renderer == NULL)
     {
         fprintf(stderr, "[%s][%s: %d]Fatal Error: SDL Renderer error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
@@ -48,6 +45,16 @@ int initSDL(char * title)
         setWindowColor(0x0, 0x0, 0x0, 0xFF);
     }
 
+    /* 0 nearest (default), 1 linear (OpenGL, Direct3D), 2 anisotropic filtering (Direct3D) */
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+
+    /* Games logical size is 1920 by 1080, but will be scaled down or up for other resolutions */
+    if(SDL_RenderSetLogicalSize(Global->renderer, 1920, 1080))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: SDL Renderer - set window logical size error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
+
+    /* Make optional maybe */
     SDL_ShowCursor(SDL_DISABLE);
 
     /* Initialize Window */
