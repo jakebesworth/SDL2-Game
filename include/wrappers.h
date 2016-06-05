@@ -14,6 +14,32 @@ extern "C"
 #endif
 
 /*  
+ * Apply Texture with extra options to global renderer
+ *
+ * @param x         The x coordinate to apply on the renderer
+ * @param y         The y coordinate to apply on the renderer
+ * @param source    The source Texture to apply
+ * @param clip      The Texture clip of the object on the spritesheet
+ * @param scale     The scale of how object is displayed (1.0 for no scaling)
+ * @param angle     The angle on which to rotate
+ * @param center    The point on which to rotate (NULL for middle)
+ * @param flip      SDL_FLIP_* where * is NONE, HORIZONTAL, VERTICAL
+ *
+ */
+void applyTextureEx(int x, int y, SDL_Texture * source, SDL_Rect * clip, float scale, double angle, SDL_Point * center, SDL_RendererFlip flip);
+
+/*  
+ * Modify texture color by: color = color * (newcolor / 255)
+ *
+ * @param texture       Texture to modify
+ * @param r             R color value
+ * @param g             G color value
+ * @param b             B color value
+ *
+ */
+void setTextureColorMod(SDL_Texture * texture, uint8_t r, uint8_t g, uint8_t b);
+
+/*  
  * Sets the window icon in the tray
  * Note: background transparency color is RGB(0,0,0)
  *
@@ -109,9 +135,10 @@ SDL_Texture * loadTextureBack(char * image, uint8_t colourR, uint8_t colourG, ui
  * @param y         The y coordinate to apply on the renderer
  * @param source    The source Texture to apply
  * @param clip      The Texture clip of the object on the spritesheet
+ * @param scale     The scale of how object is displayed (1.0 for no scaling)
  *
  */
-void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip);
+void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip, float scale);
 
 /*  
  * Initialize SDL

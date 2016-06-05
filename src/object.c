@@ -15,7 +15,7 @@
 
 int objectCollision(Object * obj1, Object * obj2)
 {
-    if(((obj1->x + obj1->clip.w) >= obj2->x) && ((obj1->y + obj1->clip.h) >= obj2->y) && ((obj2->x + obj2->clip.w) >= obj1->x) && ((obj2->y + obj2->clip.h) >= obj1->y))
+    if(((obj1->x + (obj1->clip.w * obj1->scale)) >= obj2->x) && ((obj1->y + (obj1->clip.h * obj1->scale)) >= obj2->y) && ((obj2->x + (obj2->clip.w * obj2->scale)) >= obj1->x) && ((obj2->y + (obj2->clip.h * obj2->scale)) >= obj1->y))
     {
         return 1;
     }
@@ -34,7 +34,7 @@ void setObjectAlpha(Object * obj, uint8_t alpha)
     }
 }
 
-Object * createTextObject(SDL_Texture * image, char * text, objectType type)
+Object * createTextObject(SDL_Texture * image, char * text, objectType type, float scale)
 {
     int i;
     Object * obj = NULL;
@@ -51,6 +51,10 @@ Object * createTextObject(SDL_Texture * image, char * text, objectType type)
     {
         width = height = 32;
     }
+    else if(type == FONT_MEDIUM)
+    {
+        width = height = 48;
+    }
     else if(type == FONT_LARGE)
     {
         width = height = 64;
@@ -60,12 +64,12 @@ Object * createTextObject(SDL_Texture * image, char * text, objectType type)
     {
         if(i == 0)
         {
-            obj = createObject(image, 0, 1, type, 1, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height);
+            obj = createObject(image, 0, 1, type, 1, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height, scale);
             objRoot = obj;
         }
         else
         {
-            obj->next = createObject(image, 0, 1, type, 1, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height);
+            obj->next = createObject(image, 0, 1, type, 1, (getTextX(text[i]) * width), (getTextY(text[i]) * height), width, height, scale);
             obj = obj->next;
         }
     }
@@ -145,6 +149,7 @@ int getTextY(char c)
     }
 }
 
+/* TODO remove redundant logic in these */
 void moveTextObject(Object * obj, int x, int y)
 {
     SDL_Rect clip;
@@ -154,10 +159,10 @@ void moveTextObject(Object * obj, int x, int y)
     {
         clip = obj->clip;
 
-        obj->x += (x + ((obj->clip.w * 0.5) * i++));
+        obj->x += (x + ((obj->clip.w * 0.5 * obj->scale) * i++));
         obj->y += y;
         clip.x += clip.w * obj->subImage;
-        applyTexture(obj->x, obj->y, obj->image, &clip);
+        applyTexture(obj->x, obj->y, obj->image, &clip, obj->scale);
         obj = obj->next;
     }
 }
@@ -171,10 +176,10 @@ void positionTextObject(Object * obj, int x, int y)
     {
         clip = obj->clip;
 
-        obj->x = (x + ((obj->clip.w * 0.5) * i++));
+        obj->x = (x + ((obj->clip.w * 0.5 * obj->scale) * i++));
         obj->y = y;
         clip.x += clip.w * obj->subImage;
-        applyTexture(obj->x, obj->y, obj->image, &clip);
+        applyTexture(obj->x, obj->y, obj->image, &clip, obj->scale);
         obj = obj->next;
     }
 }
@@ -186,7 +191,7 @@ void positionObject(Object * obj, int x, int y)
     obj->x = x;
     obj->y = y;
     clip.x += clip.w * obj->subImage;
-    applyTexture(obj->x, obj->y, obj->image, &clip);
+    applyTexture(obj->x, obj->y, obj->image, &clip, obj->scale);
 }
 
 void moveObject(Object * obj, int x, int y)
@@ -196,10 +201,10 @@ void moveObject(Object * obj, int x, int y)
     obj->x += x;
     obj->y += y;
     clip.x += clip.w * obj->subImage;
-    applyTexture(obj->x, obj->y, obj->image, &clip);
+    applyTexture(obj->x, obj->y, obj->image, &clip, obj->scale);
 }
 
-Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, uint16_t lives, int x, int y, int w, int h)
+Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, uint16_t lives, int x, int y, int w, int h, float scale)
 {
     Object * obj = NULL;
 
@@ -217,6 +222,7 @@ Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, obj
     obj->x = obj->y = 0;
     obj->type = type;
     obj->lives = lives;
+    obj->scale = scale;
 
     obj->clip.x = x;
     obj->clip.y = y;

@@ -18,14 +18,14 @@
 void displayGameOver(SDL_Texture * font)
 {
     clearScreen();
-    displayTextMiddle(font, "Game Over", FONT_LARGE);
+    displayTextMiddle(font, "Game Over", FONT_LARGE, 1.0);
     updateWindow();
     SDL_Delay(2 * 1000);
 }
 
-void displayTextMiddle(SDL_Texture * font, char * text, objectType type)
+void displayTextMiddle(SDL_Texture * font, char * text, objectType type, float scale)
 {
-    Object * temp = createTextObject(font, text, type);
+    Object * temp = createTextObject(font, text, type, scale);
 
     positionTextObject(temp, (Global->screenWidth - Global->screenRight + Global->screenLeft - ((strlen(text) * temp->clip.w) / 2)) / 2, (Global->screenHeight - Global->screenBottom + Global->screenTop - (temp->clip.h / 2)) / 2);
     freeObjects(temp);
@@ -50,37 +50,36 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
 
     /* Display score text */
     strncpy(buffer, "Score", BUFFER_SIZE);
-    temp = createTextObject(font, buffer, FONT_LARGE);
+    temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, 0, 0);
 
     /* Display score number */
-    previous = (temp->x + (countObjects(temp) * temp->clip.w));
+    previous = (temp->x + ((countObjects(temp) + 5 - snprintf(buffer, BUFFER_SIZE, "%d", score)) * temp->clip.w * 0.5 * temp->scale));
     freeObjects(temp);
-    snprintf(buffer, BUFFER_SIZE, "%d", score);
-    temp = createTextObject(font, buffer, FONT_LARGE);
+    temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, previous, 0);
     freeObjects(temp);
 
     /* Display lives text */
     strncpy(buffer, "Lives", BUFFER_SIZE);
-    temp = createTextObject(font, buffer, FONT_LARGE);
+    temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, ((Global->screenWidth / 4)), 0);
 
     /* Display lives number */
-    previous = (temp->x + (countObjects(temp) * temp->clip.w));
+    previous = (temp->x + ((countObjects(temp) + 1) * temp->clip.w * 0.5 * temp->scale));
     freeObjects(temp);
     snprintf(buffer, BUFFER_SIZE, "%d", ship->lives);
-    temp = createTextObject(font, buffer, FONT_LARGE);
+    temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, previous, 0);    
     freeObjects(temp);
 
     /* Display Timer */
     snprintf(buffer, BUFFER_SIZE, "%d", timer);
-    temp = createTextObject(font, buffer, FONT_LARGE);
+    temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, ((Global->screenWidth - (countObjects(temp) * temp->clip.w))), 0);
     freeObjects(temp);

@@ -158,21 +158,23 @@ Object * updateAsteroids(Object * asteroids, SDL_Texture * image)
     uint8_t random;
     uint8_t root = 1;
 
-    if((rand() % 20) == 1)
+    ASTEROID_SPEED *= (ASTEROID_SPEED < SHIP_SPEED * 2) ? 1.00025 : 1;
+
+    if((rand() % (int) (30 / ((ASTEROID_SPEED < 30) ? ASTEROID_SPEED : 30))) == 0)
     {
         random = rand() % 6;
 
         if(random >= 3)
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_SMALL, 1, 0, 32, 32, 32);
+            asteroid = createObject(image, 0, 1, ASTEROID_SMALL, 1, 0, 32, 32, 32, 1.0);
         }
         else if(random >= 1)
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 3, 32, 32, 64, 64);
+            asteroid = createObject(image, 0, 1, ASTEROID_MEDIUM, 3, 32, 32, 64, 64, 1.0);
         }
         else
         {
-            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 6, 96, 32, 96, 96);
+            asteroid = createObject(image, 0, 1, ASTEROID_LARGE, 6, 96, 32, 96, 96, 1.0);
         }
 
         asteroid->x = (int) ((rand() % (Global->screenWidth)) - (asteroid->clip.w / 2));
@@ -230,7 +232,7 @@ Object * updateUserBullets(Object * ship, Object * bullets, SDL_Texture * image,
     {
         if(Global->keystates[SDL_SCANCODE_1] || Global->keystates[SDL_SCANCODE_SPACE])
         {
-            bullet = createObject(image, 0, 2, BULLET_TINY, 1, 0, 144, 16, 16);
+            bullet = createObject(image, 0, 2, BULLET_TINY, 1, 0, 144, 16, 16, 1.0);
 
             bullet->x = (ship->x + (bullet->clip.w / 2));
             bullet->y = (ship->y - (bullet->clip.w / 2));

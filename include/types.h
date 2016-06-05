@@ -26,6 +26,7 @@ typedef enum
     ASTEROID_LARGE,
     FONT_TINY,
     FONT_SMALL,
+    FONT_MEDIUM,
     FONT_LARGE,
     OBJECT_TYPE_SIZE
 } objectType;
@@ -70,6 +71,7 @@ typedef struct object
     int x;
     int y;
     int16_t lives;
+    float scale;
     struct object * next;
 } Object;
 

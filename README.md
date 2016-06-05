@@ -1,19 +1,9 @@
-# SDL2 Game - in Development
+# Naquadah Asteroids - 1.0
 
 ## About
 
-A simple, lightweight, multi-platform, GNU C, Make, and SDL2 desktop game
-
-## What is done so far?
-
-The foundation, wrapper functions and basic game structure is done
-
-## What needs to be done?
-
-Actual gameplay, music, sprites, more SDL2 wrapper functions
-- Resolution changes via a menu -> .config file
-- Compile on other systems
-- Add 64x64 text remove others, add percentage to object creation via the rectangle
+* A simple, lightweight, multi-platform, GNU C, Make, and SDL2 desktop game
+* [Naquadah Asteroids](http://stargate.wikia.com/wiki/Naquadah_asteroid) is a simple 2d space ship game where the goal is to destroy as many asteroids as possible
 
 ## Installing and Running the game
 
@@ -50,7 +40,7 @@ Up, Down, Left and Right arrows, or wasd keys
 
 Shoot
 ```
-Spacebar and or 0-9
+Spacebar or 0
 ```
 
 Pause

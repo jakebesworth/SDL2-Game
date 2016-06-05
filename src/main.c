@@ -63,7 +63,7 @@ int main(int argc, char * argv[])
     fontLarge = loadTextureBack(getAbsolutePath(FONT_DIR "fontx64.bmp"), 0x0, 0x0, 0x0);
 
     /* Load User Objects */
-    ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32);
+    ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32, 1.0);
     positionObject(ship, (Global->screenWidth - Global->screenRight - 16) / 2, (Global->screenHeight - Global->screenBottom - 16));
     Global->timer[BULLET_TINY_TIMER] = SDL_GetTicks();
 
@@ -100,6 +100,9 @@ int main(int argc, char * argv[])
         /* Load Event Stack */
         SDL_PumpEvents();
 
+        /* Have a function to update all timers */
+        Global->timer[DISPLAY_GAME_TIMER] = SDL_GetTicks() / 1000;
+
         /* Default game state, player playing the game */
         if(Global->state == DEFAULT)
         {
@@ -112,21 +115,16 @@ int main(int argc, char * argv[])
             bullets = updateUserActions(ship, bullets, spriteSheet, Global->timer);
             asteroids = updateAsteroids(asteroids, spriteSheet);
             updateObjectCollision(&ship, &bullets, &asteroids);
-            Global->timer[DISPLAY_GAME_TIMER] = SDL_GetTicks() / 1000;
             displayHUD(ship, fontLarge, Global->timer[DISPLAY_GAME_TIMER]);
         }
         /* Game Paused */
         else if(Global->state == PAUSE)
         {
-            displayTextMiddle(fontLarge, "Pause", FONT_LARGE);
+            displayTextMiddle(fontLarge, "Pause", FONT_LARGE, 1.0);
+            displayHUD(ship, fontLarge, Global->timer[DISPLAY_GAME_TIMER]);
         }
         /* Introduction to new waves */
         else if(Global->state == MENU)
-        {
-
-        }
-        /* Introduction to new waves */
-        else if(Global->state == WAVE)
         {
 
         }
@@ -149,6 +147,7 @@ int main(int argc, char * argv[])
     SDL_DestroyTexture(fontLarge);
     freeObjects(ship);
     freeObjects(asteroids);
+    freeObjects(bullets);
 
     /* Close SDL framework */
     endSDL();

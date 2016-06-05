@@ -39,11 +39,12 @@ void setObjectAlpha(Object * obj, uint8_t alpha);
  * @param image     The SDL Texture to use
  * @param text      The string to build from
  * @param type      The type of font (tiny, small, large...)
+ * @param scale     The scale of how object is displayed (1.0 for no scaling)
  *
  * @return a text object, a chain of character objects
  *
  */
-Object * createTextObject(SDL_Texture * image, char * text, objectType type);
+Object * createTextObject(SDL_Texture * image, char * text, objectType type, float scale);
 
 /*  
  * Get the text X position in a font-sheet
@@ -96,11 +97,12 @@ void positionTextObject(Object * obj, int x, int y);
  * @param y                 The y position on the spritesheet where the image starts
  * @param w                 The image width (used for animation subimages)
  * @param h                 The image height (used for animation subimages)
+ * @param scale             The scale of how object is displayed (1.0 for no scaling)
  *
  * @return the newly created object
  *
  */
-Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, uint16_t lives, int x, int y, int w, int h);
+Object * createObject(SDL_Texture * image, int subImage, int subImageNumber, objectType type, uint16_t lives, int x, int y, int w, int h, float scale);
 
 /*  
  * Move an object relative x and y coordinates and set new object coordinates

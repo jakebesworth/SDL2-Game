@@ -20,9 +20,10 @@ extern "C"
  * @param font  Font to use
  * @param text  Text to display
  * @param type  Type of Font
+ * @param scale The scale of how object is displayed (1.0 for no scaling)
  *
  */
-void displayTextMiddle(SDL_Texture * font, char * text, objectType type);
+void displayTextMiddle(SDL_Texture * font, char * text, objectType type, float scale);
 
 /*  
  * Display the game over message

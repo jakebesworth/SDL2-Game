@@ -56,6 +56,14 @@ int initSDL(char * title)
     return 1;
 }
 
+void setTextureColorMod(SDL_Texture * texture, uint8_t r, uint8_t g, uint8_t b)
+{
+    if(SDL_SetTextureColorMod(texture, r, g, b))
+    {
+        fprintf(stderr, "[%s][%s: %d]Warning: Could not modify texture color, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
+    }
+}
+
 void setWindowIcon(char * image)
 {
     SDL_Surface * icon = NULL;
@@ -155,17 +163,23 @@ void setWindowColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
     }
 }
 
-void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip)
+void applyTextureEx(int x, int y, SDL_Texture * source, SDL_Rect * clip, float scale, double angle, SDL_Point * center, SDL_RendererFlip flip)
 {
     SDL_Rect offset = *clip;
 
     offset.x = x;
     offset.y = y;
+    offset.w *= scale;
+    offset.h *= scale;
 
-    if(SDL_RenderCopy(Global->renderer, source, clip, &offset))
+    if(SDL_RenderCopyEx(Global->renderer, source, clip, &offset, angle, center, flip))
     {
         fprintf(stderr, "[%s][%s: %d]Warning: Could not render copy, error: %s\n", getDate(), __FILE__, __LINE__, SDL_GetError());
     }
+}
+void applyTexture(int x, int y, SDL_Texture * source, SDL_Rect * clip, float scale)
+{
+    applyTextureEx(x, y, source, clip, scale, 0, NULL, SDL_FLIP_NONE);
 }
 
 void setTextureAlpha(SDL_Texture * texture, uint8_t alpha)
