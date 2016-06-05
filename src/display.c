@@ -60,18 +60,18 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, previous, 0);
-    freeObjects(temp);
 
     /* Display lives text */
+    previous += ((strlen(buffer) + 4) * temp->clip.w * 0.5 * temp->scale);
+    freeObjects(temp);
     strncpy(buffer, "Lives", BUFFER_SIZE);
     temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
-    positionTextObject(temp, ((Global->screenWidth / 4)), 0);
+    positionTextObject(temp, previous, 0);
 
     /* Display lives number */
-    previous = (temp->x + ((countObjects(temp) + 1) * temp->clip.w * 0.5 * temp->scale));
+    previous = (temp->x + ((countObjects(temp) + 3 - snprintf(buffer, BUFFER_SIZE, "%d", ship->lives)) * temp->clip.w * 0.5 * temp->scale));
     freeObjects(temp);
-    snprintf(buffer, BUFFER_SIZE, "%d", ship->lives);
     temp = createTextObject(font, buffer, FONT_LARGE, 1.0);
 
     positionTextObject(temp, previous, 0);    
