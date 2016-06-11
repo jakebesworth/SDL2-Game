@@ -76,9 +76,9 @@ void startSDL()
     Global->screenWidth = 1920; //getNativeWidth();
     Global->screenHeight = 1080; //getNativeHeight();
     Global->screenTop = 64;
-    Global->screenBottom = 40;
+    Global->screenBottom = 5;
     Global->screenLeft = 5;
-    Global->screenRight = 40;
+    Global->screenRight = 5;
     /* Make this an option */
     Global->framesPerSecond = 60.0;
     Global->gameTickRatio = (60.0 / Global->framesPerSecond);
@@ -285,6 +285,7 @@ void updateUserShipMovement(Object * ship)
 {
     int8_t shipX = 0;
     int8_t shipY = 0;
+    int temp = 0;
 
     /* User Keyboard  */
     if(Global->keystates[SDL_SCANCODE_LEFT] || Global->keystates[SDL_SCANCODE_A])
@@ -321,28 +322,35 @@ void updateUserShipMovement(Object * ship)
         ship->subImage = 2;
     }
 
+    shipX *= SHIP_SPEED;
+    shipY *= SHIP_SPEED;
+
     /* Setting Ship Boundaries */
-    if((ship->x + (shipX * SHIP_SPEED)) < (0 + Global->screenLeft))
+    if((ship->x + shipX) < Global->screenLeft)
     {
-        shipX = 0;
+        temp = (Global->screenLeft - ship->x);
+        shipX = temp > 0 ? temp : 0;
     }
 
-    if((ship->x + (shipX * SHIP_SPEED)) > (Global->screenWidth - Global->screenRight))
+    if((ship->x + ship->clip.w + shipX) > (Global->screenWidth - Global->screenRight))
     {
-        shipX = 0;
+       temp = ((Global->screenWidth - Global->screenRight) - ship->x - ship->clip.w);
+       shipX = temp > 0 ? temp : 0;
     }
 
-    if((ship->y + (shipY * SHIP_SPEED)) < (0 + Global->screenTop))
+    if((ship->y + shipY) < Global->screenTop)
     {
-        shipY = 0;
+        temp = (Global->screenTop - ship->y);
+        shipY =  temp > 0 ? temp : 0;
     }
 
-    if((ship->y + (shipY * SHIP_SPEED)) > (Global->screenHeight - Global->screenBottom))
+    if((ship->y + ship->clip.h + shipY) > (Global->screenHeight - Global->screenBottom))
     {
-        shipY = 0;
+        temp = ((Global->screenHeight - Global->screenBottom) - ship->y - ship->clip.h);
+        shipY = temp > 0 ? temp : 0;
     }
 
-    moveObject(ship, shipX * SHIP_SPEED, shipY * SHIP_SPEED);
+    moveObject(ship, shipX, shipY);
 }
 
 Object * updateUserActions(Object * ship, Object * bullets, SDL_Texture * image, uint32_t * timer)

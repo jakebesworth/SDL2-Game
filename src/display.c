@@ -27,7 +27,7 @@ void displayTextMiddle(SDL_Texture * font, char * text, objectType type, float s
 {
     Object * temp = createTextObject(font, text, type, scale);
 
-    positionTextObject(temp, (Global->screenWidth - Global->screenRight + Global->screenLeft - ((strlen(text) * temp->clip.w) / 2)) / 2, (Global->screenHeight - Global->screenBottom + Global->screenTop - (temp->clip.h / 2)) / 2);
+    positionTextObject(temp, (((Global->screenWidth - Global->screenRight) / 2) + Global->screenLeft) - (getTextObjectLength(temp, 0) / 2), (((Global->screenHeight - Global->screenBottom) / 2) + Global->screenTop) - (temp->clip.h / 2));
     freeObjects(temp);
 }
             
@@ -62,7 +62,7 @@ void displayHUD(Object * ship, SDL_Texture * font, uint32_t timer)
     positionTextObject(temp, previous, 0);
 
     /* Display lives text */
-    previous += ((strlen(buffer) + 4) * temp->clip.w * 0.5 * temp->scale);
+    previous += getTextObjectLength(temp, 5);
     freeObjects(temp);
     strncpy(buffer, "Lives", BUFFER_SIZE);
     temp = createTextObject(font, buffer, FONT_LARGE, 1.0);

@@ -14,6 +14,17 @@ extern "C"
 #endif
 
 /*  
+ * Get the Length of a text object
+ *
+ * @param obj       Text object to get length of
+ * @param extra     Any extra letters you want to add to the equation
+ *
+ * @return the float value of the object length
+ *
+ */
+float getTextObjectLength(Object * obj, int extra);
+
+/*  
  * Check object collisions
  *
  * @param obj1  The first object

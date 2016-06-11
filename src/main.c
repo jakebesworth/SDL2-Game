@@ -64,7 +64,7 @@ int main(int argc, char * argv[])
 
     /* Load User Objects */
     ship = createObject(spriteSheet, 0, 3, SHIP, 3, 0, 0, 32, 32, 1.0);
-    positionObject(ship, (Global->screenWidth - Global->screenRight - 16) / 2, (Global->screenHeight - Global->screenBottom - 16));
+    positionObject(ship, ((Global->screenWidth - Global->screenRight) / 2 + (ship->clip.w / 2)) + Global->screenLeft, ((Global->screenHeight - Global->screenTop) * 0.75 + (ship->clip.h / 2)) + Global->screenBottom);
     Global->timer[BULLET_TINY_TIMER] = SDL_GetTicks();
 
     while(!Global->exit)

@@ -13,6 +13,11 @@
 #include "object.h"
 #include "global.h"
 
+float getTextObjectLength(Object * obj, int extra)
+{
+    return (obj == NULL ? 0 : ((countObjects(obj) + extra) * obj->clip.w * 0.5 * obj->scale));
+}
+
 int objectCollision(Object * obj1, Object * obj2)
 {
     if(((obj1->x + (obj1->clip.w * obj1->scale)) >= obj2->x) && ((obj1->y + (obj1->clip.h * obj1->scale)) >= obj2->y) && ((obj2->x + (obj2->clip.w * obj2->scale)) >= obj1->x) && ((obj2->y + (obj2->clip.h * obj2->scale)) >= obj1->y))
