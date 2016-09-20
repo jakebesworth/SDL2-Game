@@ -18,8 +18,6 @@ Or download precompiled build
 
 [Windows](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-windows.tar.gz)
 
-Note: Due to some library linking issues you need to run the binary from the root directory, but there is a patch in the midst to fix this bug with OS X
-
 [OS X](https://github.com/jakebesworth/SDL2-Game/raw/master/dist/SDL2-game-osx.tar.gz)
 
 Run the game
