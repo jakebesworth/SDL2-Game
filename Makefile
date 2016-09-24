@@ -48,7 +48,7 @@ else
         OBJ := star
 
         # Library Flags
-        LIBRARY := -Wl,-rpath,$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
+        LIBRARY := -Wl,-rpath,@executable_path/$(SDL_DEVELOPMENT_DIR) -F$(SDL_DEVELOPMENT_DIR) -framework SDL2
 
         # Download Message
         DOWNLOAD := `downloading SDL2 framework library`
@@ -82,7 +82,7 @@ else
 endif
 
 # development (3), and production (0)
-DEBUG := -g3
+DEBUG := -g0
 
 # Source Files
 SRC_DIR := src/
@@ -146,8 +146,8 @@ dist: $(DIST_DIR) $(DIST_DEPENDENCIES) $(ASSETS_DIR)
 	mkdir $(DIST_DIR)$(DIST_NAME)
 	mkdir $(DIST_DIR)$(DIST_NAME)/$(LOGS_DIR)
 	cp $(OBJ) $(DIST_DIR)$(DIST_NAME)
-	cp -r $(ASSETS_DIR) $(DIST_DIR)$(DIST_NAME)
-	cp -r $(DIST_DEPENDENCIES) $(DIST_DIR)$(DIST_NAME)
+	cp -r $(ASSETS_DIR) $(DIST_DIR)$(DIST_NAME)/
+	cp -r $(DIST_DEPENDENCIES) $(DIST_DIR)$(DIST_NAME)/
 	cp README* $(DIST_DIR)$(DIST_NAME)
 	tar -zcvf $(DIST_DIR)$(DIST_NAME).tar.gz -C $(DIST_DIR) --remove-files $(DIST_NAME)
 
