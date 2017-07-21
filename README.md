@@ -1,9 +1,9 @@
-# Naquadah Asteroids - 1.0
+# Basic SDL2 Game Example - Asteroids-like - 1.0
 
 ## About
 
 * A simple, lightweight, multi-platform, GNU C, Make, and SDL2 desktop game
-* [Naquadah Asteroids](http://stargate.wikia.com/wiki/Naquadah_asteroid) is a simple 2d space ship game where the goal is to destroy as many asteroids as possible
+* Official title [Naquadah Asteroids](http://stargate.wikia.com/wiki/Naquadah_asteroid) is a simple 2d space ship game where the goal is to destroy as many asteroids as possible
 
 ## Installing and Running the game
 
